@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
-import Layout from '@/Layouts/StoreLayout.vue';
+import Layout from '@/Layouts/main.vue';
 import { BRow, BCol, BCard, BCardBody, BButton } from 'bootstrap-vue-next';
 import Swal from 'sweetalert2';
 
