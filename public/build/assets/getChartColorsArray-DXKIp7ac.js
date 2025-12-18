@@ -1,0 +1,1 @@
+const p=r=>(r=JSON.parse(r),r.map(function(a){var e=a.replace(" ","");if(e.indexOf(",")===-1){var t=getComputedStyle(document.documentElement).getPropertyValue(e);return t?(t=t.replace(" ",""),t):e}else{var n=a.split(",");if(n.length==2){var u=getComputedStyle(document.documentElement).getPropertyValue(n[0]);return u="rgba("+u+","+n[1]+")",u}else return e}})),m=p;export{m as g};

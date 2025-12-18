@@ -1,0 +1,839 @@
+{
+	"info": {
+		"_postman_id": "wallet-transaction-api-2024",
+		"name": "Wallet & Transaction System API",
+		"description": "Complete API collection for Wallet & Transaction System\n\n## Authentication\nAll protected endpoints require Bearer Token authentication.\nToken is obtained from `/api/v1/login` or `/api/v1/register` endpoints.\n\n## Base URL\nSet the `base_url` variable in the collection to your API base URL (e.g., `http://localhost:8000/api` or `https://yourdomain.com/api`)\n\n## User Types\n- **User**: Regular user with abilities: `wallet:read`, `wallet:pay`, `wallet:transfer`\n- **Store**: Store account with abilities: `wallet:read`, `wallet:receive`\n- **Admin**: Admin account (dashboard only, no API access)\n\n## Response Format\nAll responses follow this format:\n```json\n{\n  \"success\": true/false,\n  \"message\": \"Message in Arabic\",\n  \"data\": { ... }\n}\n```\n\n## Error Messages\nAll error messages are in Arabic.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.collectionVariables.set(\"auth_token\", jsonData.data.token);",
+									"        pm.collectionVariables.set(\"user_id\", jsonData.data.user.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"أحمد محمد\",\n    \"phone\": \"0599123456\",\n    \"email\": \"ahmed@example.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"register"
+							]
+						},
+						"description": "Register a new user account.\n\n**Note**: This endpoint is for mobile applications only.\n\n### Request Body\n- `name` (required): User's full name\n- `phone` (required): Unique phone number\n- `email` (optional): User's email address (must be unique if provided)\n- `password` (required): Password (minimum 8 characters)\n\n### Response\nReturns user data and authentication token.\n\n### Success Response (201)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم التسجيل بنجاح\",\n  \"data\": {\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"أحمد محمد\",\n      \"email\": \"ahmed@example.com\",\n      \"phone\": \"0599123456\",\n      \"type\": \"user\",\n      \"status\": \"active\"\n    },\n    \"token\": \"1|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n  }\n}\n```\n\n### Error Response (422)\n```json\n{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"phone\": [\"رقم الهاتف مستخدم بالفعل\"],\n    \"password\": [\"كلمة المرور يجب أن تكون على الأقل 8 أحرف\"]\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.collectionVariables.set(\"auth_token\", jsonData.data.token);",
+									"        pm.collectionVariables.set(\"user_id\", jsonData.data.user.id);",
+									"",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"0599123456\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						},
+						"description": "Login for User or Store.\n\n### Request Body\n- `identifier` (required): Phone number or email address\n- `password` (required): User's password\n\n### Response\nReturns user data and authentication token with appropriate abilities based on user type.\n\n**Abilities by User Type:**\n- **User**: `wallet:read`, `wallet:pay`, `wallet:transfer`\n- **Store**: `wallet:read`, `wallet:receive`\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم تسجيل الدخول بنجاح\",\n  \"data\": {\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"أحمد محمد\",\n      \"email\": \"ahmed@example.com\",\n      \"phone\": \"0599123456\",\n      \"type\": \"user\",\n      \"status\": \"active\"\n    },\n    \"token\": \"1|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n  }\n}\n```\n\n### Error Response (401)\n```json\n{\n  \"success\": false,\n  \"message\": \"بيانات الدخول غير صحيحة أو الحساب معطل\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration and login."
+		},
+		{
+			"name": "Profile & Wallet",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"profile"
+							]
+						},
+						"description": "Get authenticated user's profile with wallet information.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم جلب البيانات بنجاح\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"أحمد محمد\",\n    \"email\": \"ahmed@example.com\",\n    \"phone\": \"0599123456\",\n    \"type\": \"user\",\n    \"status\": \"active\",\n    \"wallet\": {\n      \"id\": 1,\n      \"balance\": 1000.50,\n      \"status\": \"active\"\n    },\n    \"unread_notifications_count\": 5,\n    \"created_at\": \"2024-01-01 12:00:00\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"أحمد محمد علي\",\n    \"email\": \"ahmed.new@example.com\",\n    \"phone\": \"0599123457\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"profile"
+							]
+						},
+						"description": "Update authenticated user's profile information.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Request Body\nAll fields are optional (only send fields you want to update):\n- `name` (optional): User's full name\n- `email` (optional): User's email address (must be unique if provided)\n- `phone` (optional): User's phone number (must be unique if provided)\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم تحديث البيانات بنجاح\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"أحمد محمد علي\",\n    \"email\": \"ahmed.new@example.com\",\n    \"phone\": \"0599123457\",\n    \"type\": \"user\",\n    \"status\": \"active\",\n    \"wallet\": {\n      \"id\": 1,\n      \"balance\": 1000.50,\n      \"status\": \"active\"\n    },\n    \"unread_notifications_count\": 5,\n    \"created_at\": \"2024-01-01 12:00:00\"\n  }\n}\n```\n\n### Error Response (422)\n```json\n{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"email\": [\"البريد الإلكتروني مستخدم بالفعل\"],\n    \"phone\": [\"رقم الهاتف مستخدم بالفعل\"]\n  }\n}\n```\n\n### Notes\n- You can use either `PUT` or `PATCH` method\n- Only include fields you want to update\n- Email and phone must be unique (if provided)\n- If email/phone is already taken by another user, validation will fail"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Wallet Balance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/wallet",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"wallet"
+							]
+						},
+						"description": "Get current wallet balance.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم جلب الرصيد بنجاح\",\n  \"data\": {\n    \"balance\": 1000.50,\n    \"currency\": \"points\"\n  }\n}\n```\n\n### Notes\n- If wallet doesn't exist, balance will be 0\n- Currency is always \"points\""
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for user profile and wallet information."
+		},
+		{
+			"name": "Stores",
+			"item": [
+				{
+					"name": "Get Active Stores",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/stores",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"stores"
+							]
+						},
+						"description": "Get list of all active stores.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Description\nThis endpoint returns all stores with `status = active`.\nUse this list to allow users to select a store for payment.\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم جلب المتاجر بنجاح\",\n  \"data\": [\n    {\n      \"id\": 2,\n      \"name\": \"متجر الأجهزة\",\n      \"phone\": \"0599987654\",\n      \"email\": \"store@example.com\",\n      \"status\": \"active\"\n    },\n    {\n      \"id\": 3,\n      \"name\": \"متجر الملابس\",\n      \"phone\": \"0599887766\",\n      \"email\": null,\n      \"status\": \"active\"\n    }\n  ]\n}\n```\n\n### Usage\n1. Call this endpoint to get list of stores\n2. Display stores in a dropdown/list in mobile app\n3. User selects a store\n4. Use `store_id` in the `/wallet/pay` endpoint"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for store management."
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Get Transaction History",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/wallet/transactions?per_page=15&status=success&type=purchase",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"wallet",
+								"transactions"
+							],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "15",
+									"description": "Number of items per page (default: 15)"
+								},
+								{
+									"key": "status",
+									"value": "success",
+									"description": "Filter by status: success, pending, failed",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "purchase",
+									"description": "Filter by type: purchase, transfer, credit, debit, refund",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get transaction history for authenticated user.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Query Parameters\n- `per_page` (optional): Number of items per page (default: 15)\n- `status` (optional): Filter by status (`success`, `pending`, `failed`)\n- `type` (optional): Filter by type (`purchase`, `transfer`, `credit`, `debit`, `refund`)\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم جلب المعاملات بنجاح\",\n  \"data\": {\n    \"transactions\": [\n      {\n        \"id\": 1,\n        \"reference_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"amount\": 100.50,\n        \"type\": \"purchase\",\n        \"status\": \"success\",\n        \"from_user\": {\n          \"id\": 1,\n          \"name\": \"أحمد محمد\",\n          \"phone\": \"0599123456\"\n        },\n        \"to_user\": {\n          \"id\": 2,\n          \"name\": \"متجر الأجهزة\",\n          \"phone\": \"0599987654\"\n        },\n        \"meta\": null,\n        \"created_at\": \"2024-01-01 12:00:00\"\n      }\n    ],\n    \"pagination\": {\n      \"current_page\": 1,\n      \"last_page\": 5,\n      \"per_page\": 15,\n      \"total\": 72\n    }\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for transaction management."
+		},
+		{
+			"name": "Payments & Transfers",
+			"item": [
+				{
+					"name": "Pay to Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"store_id\": 2,\n    \"amount\": 50.00,\n    \"meta\": {\n        \"order_id\": \"ORD-12345\",\n        \"description\": \"Payment for order\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/wallet/pay",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"wallet",
+								"pay"
+							]
+						},
+						"description": "Pay from user wallet to store wallet.\n\n### Authentication\nRequires Bearer Token with `wallet:pay` ability.\n\n### Request Body\n- `store_id` (required): ID of the store to pay\n- `amount` (required): Amount to pay (must be > 0.01)\n- `meta` (optional): Additional metadata (JSON object)\n\n### How to Use\n1. First, call `/v1/stores` to get list of active stores\n2. User selects a store from the list\n3. User enters payment amount\n4. Call this endpoint with `store_id` and `amount`\n\n### Success Response (201)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم الدفع بنجاح\",\n  \"data\": {\n    \"transaction\": {\n      \"id\": 1,\n      \"reference_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"amount\": 50.00,\n      \"type\": \"purchase\",\n      \"status\": \"success\",\n      \"from_user\": {\n        \"id\": 1,\n        \"name\": \"أحمد محمد\",\n        \"phone\": \"0599123456\"\n      },\n      \"to_user\": {\n        \"id\": 2,\n        \"name\": \"متجر الأجهزة\",\n        \"phone\": \"0599987654\"\n      },\n      \"created_at\": \"2024-01-01 12:00:00\"\n    },\n    \"new_balance\": 950.50\n  }\n}\n```\n\n### Error Responses\n\n**400 - Insufficient Balance**\n```json\n{\n  \"success\": false,\n  \"message\": \"رصيد غير كافٍ\"\n}\n```\n\n**400 - Invalid Store**\n```json\n{\n  \"success\": false,\n  \"message\": \"المستخدم المحدد ليس متجراً\"\n}\n```\n\n**422 - Validation Error**\n```json\n{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"store_id\": [\"معرف المتجر مطلوب\"],\n    \"amount\": [\"المبلغ يجب أن يكون على الأقل 0.01\"]\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Transfer to User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phone\": \"0599887766\",\n    \"amount\": 25.00,\n    \"meta\": {\n        \"note\": \"هدية عيد ميلاد\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/wallet/transfer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"wallet",
+								"transfer"
+							]
+						},
+						"description": "Transfer points from one user to another using phone number.\n\n### Authentication\nRequires Bearer Token with `wallet:transfer` ability.\n\n### Request Body\n- `phone` (required): Phone number of the recipient user\n- `amount` (required): Amount to transfer (must be > 0.01)\n- `meta` (optional): Additional metadata (JSON object)\n\n### How to Use\n1. User enters recipient's phone number\n2. User enters transfer amount\n3. Call this endpoint with `phone` and `amount`\n\n### Success Response (201)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم التحويل بنجاح\",\n  \"data\": {\n    \"transaction\": {\n      \"id\": 2,\n      \"reference_id\": \"660e8400-e29b-41d4-a716-446655440001\",\n      \"amount\": 25.00,\n      \"type\": \"transfer\",\n      \"status\": \"success\",\n      \"from_user\": {\n        \"id\": 1,\n        \"name\": \"أحمد محمد\",\n        \"phone\": \"0599123456\"\n      },\n      \"to_user\": {\n        \"id\": 3,\n        \"name\": \"محمد علي\",\n        \"phone\": \"0599887766\"\n      },\n      \"created_at\": \"2024-01-01 12:05:00\"\n    },\n    \"new_balance\": 925.50\n  }\n}\n```\n\n### Error Responses\n\n**400 - User Not Found**\n```json\n{\n  \"success\": false,\n  \"message\": \"المستخدم غير موجود\"\n}\n```\n\n**400 - Invalid Recipient**\n```json\n{\n  \"success\": false,\n  \"message\": \"يمكن التحويل فقط للمستخدمين العاديين\"\n}\n```\n\n**400 - Insufficient Balance**\n```json\n{\n  \"success\": false,\n  \"message\": \"رصيد غير كافٍ\"\n}\n```\n\n**400 - Self Transfer**\n```json\n{\n  \"success\": false,\n  \"message\": \"لا يمكن التحويل لنفسك\"\n}\n```\n\n**422 - Validation Error**\n```json\n{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"phone\": [\"رقم الهاتف مطلوب\"],\n    \"amount\": [\"المبلغ يجب أن يكون على الأقل 0.01\"]\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for payments and transfers."
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Update FCM Token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fcm_token\": \"user-fcm-token-from-firebase-sdk\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/notifications/fcm-token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"notifications",
+								"fcm-token"
+							]
+						},
+						"description": "Update FCM token for authenticated user.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Request Body\n- `fcm_token` (required): Firebase Cloud Messaging token from mobile app\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم تحديث رمز FCM بنجاح\",\n  \"data\": {\n    \"fcm_token\": \"user-fcm-token-from-firebase-sdk\",\n    \"firebase_enabled\": true\n  }\n}\n```\n\n### Usage\nCall this endpoint after user logs in to register their FCM token for push notifications."
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle Firebase Notifications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"enabled\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/notifications/toggle-firebase",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"notifications",
+								"toggle-firebase"
+							]
+						},
+						"description": "Toggle Firebase push notifications on/off.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Request Body\n- `enabled` (required): Boolean - true to enable, false to disable\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم تفعيل الإشعارات\",\n  \"data\": {\n    \"firebase_enabled\": true\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notifications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/notifications?per_page=15&read=false",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"notifications"
+							],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "15",
+									"description": "Number of items per page (default: 15)"
+								},
+								{
+									"key": "read",
+									"value": "false",
+									"description": "Filter by read status: true, false, or null for all",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all notifications for authenticated user.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Query Parameters\n- `per_page` (optional): Number of items per page (default: 15)\n- `read` (optional): Filter by read status (true/false/null for all)\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم جلب الإشعارات بنجاح\",\n  \"data\": {\n    \"notifications\": [\n      {\n        \"id\": 1,\n        \"type\": \"transaction_received\",\n        \"title\": \"تم استلام تحويل\",\n        \"body\": \"تم استلام مبلغ 50.00 نقطة من أحمد محمد\",\n        \"data\": {\n          \"transaction_type\": \"transfer\",\n          \"amount\": 50.00,\n          \"from_user\": \"أحمد محمد\",\n          \"reference_id\": \"550e8400-e29b-41d4-a716-446655440000\"\n        },\n        \"read\": false,\n        \"read_at\": null,\n        \"created_at\": \"2024-01-01 12:00:00\"\n      }\n    ],\n    \"pagination\": {\n      \"current_page\": 1,\n      \"last_page\": 5,\n      \"per_page\": 15,\n      \"total\": 72\n    }\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Unread Count",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/notifications/unread-count",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"notifications",
+								"unread-count"
+							]
+						},
+						"description": "Get count of unread notifications for authenticated user.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم جلب عدد الإشعارات غير المقروءة بنجاح\",\n  \"data\": {\n    \"unread_count\": 5\n  }\n}\n```\n\n### Usage\nCall this endpoint to show badge count on notifications icon in mobile app."
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/notifications/1/read",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"notifications",
+								"1",
+								"read"
+							]
+						},
+						"description": "Mark a specific notification as read.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### URL Parameters\n- `id`: Notification ID\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم تحديد الإشعار كمقروء\"\n}\n```\n\n### Error Response (404)\n```json\n{\n  \"success\": false,\n  \"message\": \"الإشعار غير موجود\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Mark All Notifications as Read",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/notifications/read-all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"notifications",
+								"read-all"
+							]
+						},
+						"description": "Mark all notifications as read for authenticated user.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم تحديد 5 إشعار كمقروء\",\n  \"data\": {\n    \"marked_count\": 5\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing push notifications and FCM tokens."
+		},
+		{
+			"name": "External API",
+			"item": [
+				{
+					"name": "Update User Balances",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-API-Token",
+								"value": "{{api_token}}",
+								"type": "text",
+								"description": "API Token from .env (API_TOKEN)"
+							},
+							{
+								"key": "X-API-Secret",
+								"value": "{{api_secret}}",
+								"type": "text",
+								"description": "API Secret from .env (API_SECRET)"
+							},
+							{
+								"key": "X-Reference-ID",
+								"value": "REF-2024-01-20-001",
+								"type": "text",
+								"description": "Unique reference ID to prevent duplicate processing"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reference_id\": \"REF-2024-01-20-001\",\n    \"balances\": {\n        \"1\": 100.00,\n        \"2\": -50.00,\n        \"3\": 200.00\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/external/balances/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"external",
+								"balances",
+								"update"
+							]
+						},
+						"description": "Update user balances from external system (CRM/ERP) - **ACCUMULATIVE**.\n\n### Authentication\nRequires API authentication via headers:\n- `X-API-Token`: API token from `.env` file (`API_TOKEN`)\n- `X-API-Secret`: API secret from `.env` file (`API_SECRET`)\n- `X-Reference-ID`: Unique reference ID in header (optional, can also be in body)\n\n### Important Notes\n- This endpoint is for **external systems only** (CRM/ERP integration)\n- **ACCUMULATIVE**: Adds/subtracts amounts to/from current balance (does NOT set absolute value)\n- Only updates balances for users with type `user` or `store` (not `admin`)\n- Creates transactions (credit/debit) instead of directly updating balance\n- Balance is calculated from sum of all transactions\n- Prevents duplicate processing using `reference_id`\n- If same `reference_id` is sent twice, returns the previous result\n\n### Request Body\n- `reference_id` (required): Unique reference ID to prevent duplicate processing\n- `balances` (required): Object with user IDs as keys and **amounts to add/subtract** as values\n  - Format: `{ \"user_id\": amount_to_add, ... }`\n  - Positive values: Add to balance (credit)\n  - Negative values: Subtract from balance (debit)\n  - Example: `{ \"1\": 100.00, \"2\": -50.00 }`\n    - User 1: Adds 100 to current balance\n    - User 2: Subtracts 50 from current balance\n\n### How It Works (Accumulative)\n1. System checks if `reference_id` was processed before\n2. If processed, returns previous result (prevents duplicates)\n3. For each user:\n   - Calculates current balance from transactions\n   - Adds/subtracts the specified amount (positive = credit, negative = debit)\n   - Creates `credit` transaction if amount is positive\n   - Creates `debit` transaction if amount is negative\n   - Validates that balance won't go negative (for debit transactions)\n   - Updates wallet balance field (for quick access)\n4. Records the update in `external_balance_updates` table\n\n### Example\n- User has current balance: **100**\n- You send: **100**\n- New balance: **200** (100 + 100)\n\n- User has current balance: **200**\n- You send: **-50**\n- New balance: **150** (200 - 50)\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم تحديث جميع الأرصدة بنجاح\",\n  \"data\": {\n    \"reference_id\": \"REF-2024-01-20-001\",\n    \"processed_count\": 3,\n    \"failed_count\": 0,\n    \"total_count\": 3\n  }\n}\n```\n\n### Success Response (200) - Already Processed\nIf the same `reference_id` was sent before:\n```json\n{\n  \"success\": true,\n  \"message\": \"تم معالجة هذا المرجع مسبقاً\",\n  \"data\": {\n    \"reference_id\": \"REF-2024-01-20-001\",\n    \"processed_at\": \"2024-01-20 10:30:00\",\n    \"processed_count\": 3,\n    \"failed_count\": 0\n  }\n}\n```\n\n### Partial Success Response (207)\nIf some updates succeeded and some failed:\n```json\n{\n  \"success\": true,\n  \"message\": \"تم تحديث بعض الأرصدة بنجاح، ولكن حدثت أخطاء في بعضها\",\n  \"data\": {\n    \"reference_id\": \"REF-2024-01-20-001\",\n    \"processed_count\": 2,\n    \"failed_count\": 1,\n    \"total_count\": 3,\n    \"errors\": [\n      \"Failed to update balance for user ID 3: User not found\"\n    ]\n  }\n}\n```\n\n### Error Responses\n\n**400 - Missing Reference ID**\n```json\n{\n  \"success\": false,\n  \"message\": \"X-Reference-ID header is required.\"\n}\n```\n\n**401 - Authentication Failed**\n```json\n{\n  \"success\": false,\n  \"message\": \"Invalid API credentials\"\n}\n```\n\n**409 - Duplicate Reference ID (Processing)**\n```json\n{\n  \"success\": false,\n  \"message\": \"This reference ID is currently being processed\"\n}\n```\n\n**422 - Validation Error**\n```json\n{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"reference_id\": [\"Reference ID is required\"],\n    \"balances\": [\"Balances array is required\"],\n    \"balances.1\": [\"Balance must be a number\"]\n  }\n}\n```\n\n**500 - Server Error**\n```json\n{\n  \"success\": false,\n  \"message\": \"حدث خطأ أثناء معالجة الطلب: Error message\"\n}\n```\n\n### Example Usage\n```bash\ncurl -X POST http://localhost:8000/api/external/balances/update \\\n  -H \"Content-Type: application/json\" \\\n  -H \"X-API-Token: your-api-token\" \\\n  -H \"X-API-Secret: your-api-secret\" \\\n  -H \"X-Reference-ID: REF-2024-01-20-001\" \\\n  -d '{\n    \"reference_id\": \"REF-2024-01-20-001\",\n    \"balances\": {\n      \"1\": 100.00,\n      \"2\": -50.00\n    }\n  }'\n```\n\n### Notes\n- **ACCUMULATIVE**: Amounts are added/subtracted from current balance, not set as absolute values\n- Balance is calculated from transactions: `Sum(credits) - Sum(debits)`\n- Each balance update creates a transaction record\n- Transactions are stored with type `credit` (positive amounts) or `debit` (negative amounts)\n- Transaction `reference_id` format: `{external_reference_id}-user-{user_id}`\n- Only `user` and `store` types can have balances updated (not `admin`)\n- Debit transactions will fail if balance would go negative"
+					},
+					"response": []
+				}
+			],
+			"description": "External API endpoints for CRM/ERP integration. Requires API authentication via X-API-Token and X-API-Secret headers."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "api_token",
+			"value": "",
+			"type": "string",
+			"description": "API Token from .env (API_TOKEN) for External API authentication"
+		},
+		{
+			"key": "api_secret",
+			"value": "",
+			"type": "string",
+			"description": "API Secret from .env (API_SECRET) for External API authentication"
+		}
+	]
+}
+
