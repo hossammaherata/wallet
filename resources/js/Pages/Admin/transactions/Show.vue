@@ -4,6 +4,9 @@ import Layout from '@/Layouts/main.vue';
 import PageHeader from '@/Components/page-header.vue';
 import CardHeader from '@/common/card-header.vue';
 import { BRow, BCol, BCard, BCardBody, BButton, BBadge } from 'bootstrap-vue-next';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     transaction: Object
@@ -46,27 +49,27 @@ const getTypeBadge = (type) => {
 
 <template>
     <Layout>
-        <PageHeader title="Transaction Details" pageTitle="Transaction Information" />
+        <PageHeader :title="t('t-transaction-details')" :pageTitle="t('t-transaction-information')" />
 
         <BRow>
             <BCol lg="12">
                 <BCard no-body>
-                    <CardHeader title="Transaction Details" />
+                    <CardHeader :title="t('t-transaction-details')" />
                     <BCardBody>
                         <BRow>
                             <BCol md="6">
                                 <table class="table table-bordered">
                                     <tbody>
                                         <tr>
-                                            <th width="40%">Reference ID</th>
+                                            <th width="40%">{{ t('t-reference-id') }}</th>
                                             <td><code>{{ transaction.reference_id }}</code></td>
                                         </tr>
                                         <tr>
-                                            <th>Amount</th>
-                                            <td><strong>{{ formatAmount(transaction.amount) }} Points</strong></td>
+                                            <th>{{ t('t-amount') }}</th>
+                                            <td><strong>{{ formatAmount(transaction.amount) }} {{ t('t-points') }}</strong></td>
                                         </tr>
                                         <tr>
-                                            <th>Type</th>
+                                            <th>{{ t('t-type') }}</th>
                                             <td>
                                                 <BBadge :variant="getTypeBadge(transaction.type)">
                                                     {{ transaction.type }}
@@ -74,7 +77,7 @@ const getTypeBadge = (type) => {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Status</th>
+                                            <th>{{ t('t-status') }}</th>
                                             <td>
                                                 <BBadge :variant="getStatusBadge(transaction.status)">
                                                     {{ transaction.status }}
@@ -82,7 +85,7 @@ const getTypeBadge = (type) => {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Created At</th>
+                                            <th>{{ t('t-created-at') }}</th>
                                             <td>{{ formatDate(transaction.created_at) }}</td>
                                         </tr>
                                     </tbody>
@@ -92,17 +95,17 @@ const getTypeBadge = (type) => {
                                 <table class="table table-bordered">
                                     <tbody>
                                         <tr>
-                                            <th width="40%">From</th>
+                                            <th width="40%">{{ t('t-from') }}</th>
                                             <td>
                                                 <span v-if="transaction.from_wallet?.user">
                                                     <strong>{{ transaction.from_wallet.user.name }}</strong><br>
                                                     <small class="text-muted">{{ transaction.from_wallet.user.phone }}</small>
                                                 </span>
-                                                <BBadge v-else variant="secondary">SYSTEM</BBadge>
+                                                <BBadge v-else variant="secondary">{{ t('t-system') }}</BBadge>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>To</th>
+                                            <th>{{ t('t-to') }}</th>
                                             <td>
                                                 <span v-if="transaction.to_wallet?.user">
                                                     <strong>{{ transaction.to_wallet.user.name }}</strong><br>
@@ -112,7 +115,7 @@ const getTypeBadge = (type) => {
                                             </td>
                                         </tr>
                                         <tr v-if="transaction.meta">
-                                            <th>Additional Info</th>
+                                            <th>{{ t('t-additional-info') }}</th>
                                             <td>
                                                 <pre class="mb-0">{{ JSON.stringify(transaction.meta, null, 2) }}</pre>
                                             </td>
@@ -124,7 +127,7 @@ const getTypeBadge = (type) => {
 
                         <div class="mt-3">
                             <Link :href="route('admin.transactions.index')" class="btn btn-secondary">
-                                Back to Transactions
+                                {{ t('t-back-to-transactions') }}
                             </Link>
                         </div>
                     </BCardBody>

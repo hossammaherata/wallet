@@ -1,5 +1,8 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
   title: {
@@ -42,13 +45,13 @@ const reset = () => {
         <b-form-input
           type="text"
           v-model="model.keyword"
-          placeholder="Search...."
+          :placeholder="t('t-search') + '....'"
           class="mr-2"
           @keyup.enter="submit"
         />
         <!-- Search Button -->
         <b-button @click.prevent="submit" style="margin-left:15px;" variant="primary">
-          <i class="fas fa-search"></i> Search
+          <i class="fas fa-search"></i> {{ t('t-search') }}
         </b-button>
         <!-- Reset Button -->
         <b-button 
@@ -56,7 +59,7 @@ const reset = () => {
           style="margin-left:10px;" 
           variant="secondary"
         >
-          <i class="ri-refresh-line"></i> Reset
+          <i class="ri-refresh-line"></i> {{ t('t-reset') }}
         </b-button>
       </div>
     </div>

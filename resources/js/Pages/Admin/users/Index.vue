@@ -7,6 +7,9 @@ import CardHeader from '@/common/card-header.vue';
 import { BContainer, BRow, BCol, BCard, BCardBody, BTable, BPagination, BButton, BBadge } from 'bootstrap-vue-next';
 import Swal from 'sweetalert2';
 import { useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { users, keyword } = usePage().props;
 
@@ -37,19 +40,19 @@ const formatBalance = (balance) => {
 
 const deleteUser = (userId) => {
     Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: t('t-are-you-sure'),
+        text: t('t-wont-be-able-to-revert'),
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: t('t-yes-delete-it')
     }).then((result) => {
         if (result.isConfirmed) {
             router.delete(route('admin.users.destroy', userId), {
                 onSuccess: () => {
                     getResourese();
-                    Swal.fire('Deleted!', 'User has been deleted.', 'success');
+                    Swal.fire(t('t-deleted'), t('t-user-has-been-deleted'), 'success');
                 }
             });
         }
@@ -65,7 +68,7 @@ const updateStatus = (userId, currentStatus) => {
         preserveScroll: true,
         onSuccess: () => {
             getResourese();
-            Swal.fire('Success!', 'User status updated successfully.', 'success');
+            Swal.fire(t('t-success'), t('t-user-status-updated'), 'success');
         }
     });
 };
@@ -79,8 +82,8 @@ const updateWalletStatus = (userId, currentWalletStatus) => {
         preserveScroll: true,
         onSuccess: () => {
             getResourese();
-            const statusText = newStatus === 'locked' ? 'Locked' : 'Active';
-            Swal.fire('Success!', `Wallet status updated to: ${statusText}`, 'success');
+            const statusText = newStatus === 'locked' ? t('t-locked') : t('t-active');
+            Swal.fire(t('t-success'), `${t('t-wallet-status-updated')} ${statusText}`, 'success');
         }
     });
 };
@@ -96,14 +99,14 @@ const resetSearch = () => {
 
 <template>
     <Layout>
-        <Head title="Users" />
-        <PageHeader title="Users" pageTitle="Users Management" />
+        <Head :title="t('t-users')" />
+        <PageHeader :title="t('t-users')" :pageTitle="t('t-users-management')" />
 
         <BRow>
             <BCol lg="12">
                 <BCard no-body>
                     <CardHeader 
-                        title="Users List"
+                        :title="t('t-users-list')"
                         :model="form"
                         SearchButton="true"
                         @getResourese="getResourese"
@@ -111,14 +114,14 @@ const resetSearch = () => {
                     >
                         <template #actions>
                             <Link :href="route('admin.users.create')" class="btn btn-primary">
-                                <i class="ri-add-line align-middle me-1"></i> Add New User
+                                <i class="ri-add-line align-middle me-1"></i> {{ t('t-add-new-user') }}
                             </Link>
                         </template>
                     </CardHeader>
                     <BCardBody>
                         <!-- Total count display -->
                         <div class="mb-3">
-                            <span class="text-muted">Total Users: <strong>{{ users.total }}</strong></span>
+                            <span class="text-muted">{{ t('t-total-users') }}: <strong>{{ users.total }}</strong></span>
                         </div>
 
                         <div class="table-responsive">
@@ -128,14 +131,14 @@ const resetSearch = () => {
                                 :items="users.data" 
                                 :fields="[
                                     { key: 'row_number', label: '#', sortable: false },
-                                    { key: 'name', label: 'Name', sortable: true },
-                                    { key: 'phone', label: 'Phone', sortable: true },
-                                    { key: 'email', label: 'Email', sortable: true },
-                                    { key: 'balance', label: 'Balance', sortable: true },
-                                    { key: 'status', label: 'Status', sortable: true },
-                                    { key: 'wallet_status', label: 'Wallet Status', sortable: true },
-                                    { key: 'created_at', label: 'Created At', sortable: true },
-                                    { key: 'actions', label: 'Actions' }
+                                    { key: 'name', label: t('t-name'), sortable: true },
+                                    { key: 'phone', label: t('t-phone'), sortable: true },
+                                    { key: 'email', label: t('t-email'), sortable: true },
+                                    { key: 'balance', label: t('t-balance'), sortable: true },
+                                    { key: 'status', label: t('t-status'), sortable: true },
+                                    { key: 'wallet_status', label: t('t-wallet-status'), sortable: true },
+                                    { key: 'created_at', label: t('t-created-at'), sortable: true },
+                                    { key: 'actions', label: t('t-actions') }
                                 ]"
                                 class="table-nowrap"
                             >
@@ -144,18 +147,18 @@ const resetSearch = () => {
                                 </template>
 
                                 <template #cell(balance)="{ item }">
-                                    <span class="fw-bold">{{ formatBalance(item.wallet?.balance) }} Points</span>
+                                    <span class="fw-bold">{{ formatBalance(item.wallet?.balance) }} {{ t('t-points') }}</span>
                                 </template>
 
                                 <template #cell(status)="{ item }">
                                     <BBadge :variant="item.status === 'active' ? 'success' : 'danger'">
-                                        {{ item.status === 'active' ? 'Active' : 'Suspended' }}
+                                        {{ item.status === 'active' ? t('t-active') : t('t-suspended') }}
                                     </BBadge>
                                 </template>
 
                                 <template #cell(wallet_status)="{ item }">
                                     <BBadge v-if="item.wallet" :variant="item.wallet.status === 'active' ? 'success' : 'danger'">
-                                        {{ item.wallet.status === 'active' ? 'Active' : 'Locked' }}
+                                        {{ item.wallet.status === 'active' ? t('t-active') : t('t-locked') }}
                                     </BBadge>
                                     <span v-else class="text-muted">-</span>
                                 </template>
@@ -169,7 +172,7 @@ const resetSearch = () => {
                                         :href="route('admin.users.show', item.id)" 
                                         class="btn btn-info btn-sm me-1"
                                     >
-                                        View
+                                        {{ t('t-view') }}
                                     </Link>
                                     <BButton 
                                         variant="warning" 
@@ -177,7 +180,7 @@ const resetSearch = () => {
                                         class="me-1"
                                         @click="updateStatus(item.id, item.status)"
                                     >
-                                        {{ item.status === 'active' ? 'Suspend' : 'Activate' }}
+                                        {{ item.status === 'active' ? t('t-suspend') : t('t-activate') }}
                                     </BButton>
                                     <BButton 
                                         v-if="item.wallet"
@@ -187,20 +190,20 @@ const resetSearch = () => {
                                         @click="updateWalletStatus(item.id, item.wallet.status)"
                                     >
                                         <i :class="item.wallet.status === 'active' ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
-                                        {{ item.wallet.status === 'active' ? 'Lock Wallet' : 'Unlock Wallet' }}
+                                        {{ item.wallet.status === 'active' ? t('t-lock-wallet') : t('t-unlock-wallet') }}
                                     </BButton>
                                     <Link 
                                         :href="route('admin.users.edit', item.id)" 
                                         class="btn btn-primary btn-sm me-1"
                                     >
-                                        Edit
+                                        {{ t('t-edit') }}
                                     </Link>
                                     <BButton 
                                         variant="danger" 
                                         size="sm"
                                         @click="deleteUser(item.id)"
                                     >
-                                        Delete
+                                        {{ t('t-delete') }}
                                     </BButton>
                                 </template>
                             </BTable>

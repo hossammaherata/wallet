@@ -23,6 +23,7 @@ const messages = {
 const locale = sessionStorage.getItem("locale");
 
 const i18n = createI18n({
+  legacy: false,
   locale:  locale || "en",
   fallbackLocale: "en",
   messages: messages

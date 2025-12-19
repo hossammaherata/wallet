@@ -9,6 +9,9 @@ import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import { BRow, BCol, BCard, BCardBody, BButton } from 'bootstrap-vue-next';
 import Swal from 'sweetalert2';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const form = useForm({
     name: '',
@@ -24,16 +27,16 @@ const submit = () => {
     form.post(route('admin.stores.store'), {
         onSuccess: () => {
             Swal.fire({
-                title: 'Success!',
-                text: 'Store created successfully',
+                title: t('t-success'),
+                text: t('t-store-created-successfully'),
                 icon: 'success',
                 confirmButtonText: 'OK'
             });
         },
         onError: () => {
             Swal.fire({
-                title: 'Error!',
-                text: 'Something went wrong',
+                title: t('t-error'),
+                text: t('t-something-went-wrong'),
                 icon: 'error',
                 confirmButtonText: 'OK'
             });
@@ -44,19 +47,19 @@ const submit = () => {
 
 <template>
     <Layout>
-        <PageHeader title="Create Store" pageTitle="Create New Store" />
+        <PageHeader :title="t('t-create-store')" :pageTitle="t('t-create-new-store')" />
 
         <BRow>
             <BCol lg="12">
                 <BCard no-body>
-                    <CardHeader title="Create Store Information" />
+                    <CardHeader :title="t('t-create-store-information')" />
                     <BCardBody>
                         <FormSection @submitted="submit">
                             <template #form>
                                 <BRow>
                                     <BCol md="6">
                                         <div class="mb-3">
-                                            <InputLabel for="name" value="Store Name *" />
+                                            <InputLabel for="name" :value="t('t-store-name-required')" />
                                             <TextInput 
                                                 id="name" 
                                                 v-model="form.name" 
@@ -70,7 +73,7 @@ const submit = () => {
                                     </BCol>
                                     <BCol md="6">
                                         <div class="mb-3">
-                                            <InputLabel for="phone" value="Phone *" />
+                                            <InputLabel for="phone" :value="t('t-phone-required')" />
                                             <TextInput 
                                                 id="phone" 
                                                 v-model="form.phone" 
@@ -87,7 +90,7 @@ const submit = () => {
                                 <BRow>
                                     <BCol md="6">
                                         <div class="mb-3">
-                                            <InputLabel for="email" value="Email" />
+                                            <InputLabel for="email" :value="t('t-email-label')" />
                                             <TextInput 
                                                 id="email" 
                                                 v-model="form.email" 
@@ -100,7 +103,7 @@ const submit = () => {
                                     </BCol>
                                     <BCol md="6">
                                         <div class="mb-3">
-                                            <InputLabel value="Status *" />
+                                            <InputLabel :value="t('t-status-required')" />
                                             <div class="d-flex gap-4 mt-2">
                                                 <div class="form-check">
                                                     <input 
@@ -113,7 +116,7 @@ const submit = () => {
                                                         :class="{ 'is-invalid': form.errors.status }"
                                                     />
                                                     <label class="form-check-label" for="status_active">
-                                                        Active
+                                                        {{ t('t-active') }}
                                                     </label>
                                                 </div>
                                                 <div class="form-check">
@@ -127,7 +130,7 @@ const submit = () => {
                                                         :class="{ 'is-invalid': form.errors.status }"
                                                     />
                                                     <label class="form-check-label" for="status_suspended">
-                                                        Suspended
+                                                        {{ t('t-suspended') }}
                                                     </label>
                                                 </div>
                                             </div>
@@ -139,7 +142,7 @@ const submit = () => {
                                 <BRow>
                                     <BCol md="12">
                                         <div class="mb-3">
-                                            <InputLabel for="photo" value="Profile Photo" />
+                                            <InputLabel for="photo" :value="t('t-profile-photo')" />
                                             <input 
                                                 type="file" 
                                                 id="photo"
@@ -148,7 +151,7 @@ const submit = () => {
                                                 class="form-control"
                                                 :class="{ 'is-invalid': form.errors.photo }"
                                             />
-                                            <small class="text-muted">Max size: 2MB. Supported formats: JPG, PNG, GIF</small>
+                                            <small class="text-muted">{{ t('t-max-size') }}</small>
                                             <InputError :message="form.errors.photo" />
                                         </div>
                                     </BCol>
@@ -157,7 +160,7 @@ const submit = () => {
                                 <BRow>
                                     <BCol md="6">
                                         <div class="mb-3">
-                                            <InputLabel for="password" value="Password *" />
+                                            <InputLabel for="password" :value="t('t-password-required')" />
                                             <TextInput 
                                                 id="password" 
                                                 v-model="form.password" 
@@ -171,7 +174,7 @@ const submit = () => {
                                     </BCol>
                                     <BCol md="6">
                                         <div class="mb-3">
-                                            <InputLabel for="password_confirmation" value="Confirm Password *" />
+                                            <InputLabel for="password_confirmation" :value="t('t-confirm-password-required')" />
                                             <TextInput 
                                                 id="password_confirmation" 
                                                 v-model="form.password_confirmation" 
@@ -193,10 +196,10 @@ const submit = () => {
                                     :class="{ 'opacity-25': form.processing }" 
                                     :disabled="form.processing"
                                 >
-                                    Create Store
+                                    {{ t('t-create-store-button') }}
                                 </BButton>
                                 <Link :href="route('admin.stores.index')" class="btn btn-secondary ms-2">
-                                    Back to Stores
+                                    {{ t('t-back-to-stores') }}
                                 </Link>
                             </template>
                         </FormSection>

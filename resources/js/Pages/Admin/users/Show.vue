@@ -5,6 +5,9 @@ import CardHeader from "@/common/card-header.vue";
 import { usePage, Link, router } from '@inertiajs/vue3';
 import { BRow, BCol, BCard, BCardBody, BTable, BPagination, BBadge } from 'bootstrap-vue-next';
 import Swal from 'sweetalert2';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { user, transactions } = usePage().props;
 
@@ -61,11 +64,11 @@ const updateWalletStatus = (event) => {
         preserveScroll: true,
         onSuccess: (page) => {
             // Show success message
-            const statusText = status === 'locked' ? 'Locked' : 'Active';
+            const statusText = status === 'locked' ? t('t-locked') : t('t-active');
             Swal.fire({
                 icon: 'success',
-                title: 'Success!',
-                text: `Wallet status updated to: ${statusText}`,
+                title: t('t-success'),
+                text: `${t('t-wallet-status-updated')} ${statusText}`,
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -76,8 +79,8 @@ const updateWalletStatus = (event) => {
         onError: (errors) => {
             Swal.fire({
                 icon: 'error',
-                title: 'Error!',
-                text: errors.message || 'An error occurred while updating wallet status',
+                title: t('t-error'),
+                text: errors.message || t('t-an-error-occurred'),
             });
         }
     });
@@ -86,13 +89,13 @@ const updateWalletStatus = (event) => {
 
 <template>
     <Layout>
-        <PageHeader title="User Details" pageTitle="All Users" :href="route('admin.users.index')">
+        <PageHeader :title="t('t-user-details')" :pageTitle="t('t-all-users')" :href="route('admin.users.index')">
             <template #actions>
                 <Link :href="route('admin.users.edit', user.id)" class="btn btn-warning me-2">
-                    Edit User
+                    {{ t('t-edit-user') }}
                 </Link>
                 <Link :href="route('admin.users.index')" class="btn btn-secondary">
-                    Back to List
+                    {{ t('t-back-to-list') }}
                 </Link>
             </template>
         </PageHeader>
@@ -100,19 +103,19 @@ const updateWalletStatus = (event) => {
         <BRow>
             <BCol lg="12">
                 <BCard no-body>
-                    <CardHeader title="User Information" />
+                    <CardHeader :title="t('t-user-information')" />
 
                     <BCardBody>
                         <BRow>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Full Name</label>
+                                    <label class="form-label fw-semibold">{{ t('t-full-name') }}</label>
                                     <p class="form-control-plaintext">{{ user.name }}</p>
                                 </div>
                             </BCol>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Username</label>
+                                    <label class="form-label fw-semibold">{{ t('t-username') }}</label>
                                     <p class="form-control-plaintext">{{ user.user_name }}</p>
                                 </div>
                             </BCol>
@@ -121,13 +124,13 @@ const updateWalletStatus = (event) => {
                         <BRow>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Email Address</label>
+                                    <label class="form-label fw-semibold">{{ t('t-email-address') }}</label>
                                     <p class="form-control-plaintext">{{ user.email }}</p>
                                 </div>
                             </BCol>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">User Type</label>
+                                    <label class="form-label fw-semibold">{{ t('t-user-type') }}</label>
                                     <p class="form-control-plaintext">
                                         <span class="badge bg-success">{{ user.type }}</span>
                                     </p>
@@ -138,13 +141,13 @@ const updateWalletStatus = (event) => {
                         <BRow>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Created At</label>
+                                    <label class="form-label fw-semibold">{{ t('t-created-at') }}</label>
                                     <p class="form-control-plaintext">{{ formatDate(user.created_at) }}</p>
                                 </div>
                             </BCol>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Last Updated</label>
+                                    <label class="form-label fw-semibold">{{ t('t-last-updated') }}</label>
                                     <p class="form-control-plaintext">{{ formatDate(user.updated_at) }}</p>
                                 </div>
                             </BCol>
@@ -153,7 +156,7 @@ const updateWalletStatus = (event) => {
                         <BRow v-if="user.email_verified_at">
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Email Verified At</label>
+                                    <label class="form-label fw-semibold">{{ t('t-email-verified-at') }}</label>
                                     <p class="form-control-plaintext">{{ formatDate(user.email_verified_at) }}</p>
                                 </div>
                             </BCol>
@@ -167,22 +170,22 @@ const updateWalletStatus = (event) => {
         <BRow class="mt-4">
             <BCol lg="12">
                 <BCard no-body>
-                    <CardHeader title="Wallet Information" />
+                    <CardHeader :title="t('t-wallet-information')" />
                     <BCardBody>
                         <BRow>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Current Balance</label>
+                                    <label class="form-label fw-semibold">{{ t('t-current-balance') }}</label>
                                     <p class="form-control-plaintext">
                                         <span class="h4 text-primary fw-bold">
-                                            {{ formatAmount(user.wallet?.balance || 0) }} Points
+                                            {{ formatAmount(user.wallet?.balance || 0) }} {{ t('t-points') }}
                                         </span>
                                     </p>
                                 </div>
                             </BCol>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Wallet Status</label>
+                                    <label class="form-label fw-semibold">{{ t('t-wallet-status') }}</label>
                                     <div class="d-flex align-items-center gap-2">
                                         <BBadge :variant="user.wallet?.status === 'active' ? 'success' : 'danger'">
                                             {{ user.wallet?.status === 'active' ? 'Active' : (user.wallet?.status === 'locked' ? 'Locked' : 'N/A') }}
@@ -229,14 +232,14 @@ const updateWalletStatus = (event) => {
                                     :items="transactions.data" 
                                     :fields="[
                                         { key: 'row_number', label: '#', sortable: false },
-                                        { key: 'reference_id', label: 'Reference ID', sortable: true },
-                                        { key: 'from_user', label: 'From', sortable: false },
-                                        { key: 'to_user', label: 'To', sortable: false },
-                                        { key: 'amount', label: 'Amount', sortable: true },
-                                        { key: 'type', label: 'Type', sortable: true },
-                                        { key: 'status', label: 'Status', sortable: true },
-                                        { key: 'created_at', label: 'Date', sortable: true },
-                                        { key: 'actions', label: 'Actions' }
+                                        { key: 'reference_id', label: t('t-reference-id'), sortable: true },
+                                        { key: 'from_user', label: t('t-from'), sortable: false },
+                                        { key: 'to_user', label: t('t-to'), sortable: false },
+                                        { key: 'amount', label: t('t-amount'), sortable: true },
+                                        { key: 'type', label: t('t-type'), sortable: true },
+                                        { key: 'status', label: t('t-status'), sortable: true },
+                                        { key: 'created_at', label: t('t-date'), sortable: true },
+                                        { key: 'actions', label: t('t-actions') }
                                     ]"
                                     class="table-nowrap"
                                 >

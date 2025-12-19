@@ -13,12 +13,6 @@ import simplebar from "simplebar-vue";
 import i18n from "../i18n";
 
 import us_flag from "@assets/images/flags/us.svg";
-import spain from "@assets/images/flags/spain.svg";
-import germany from "@assets/images/flags/germany.svg";
-import italy from "@assets/images/flags/italy.svg";
-import russia from "@assets/images/flags/russia.svg";
-import china from "@assets/images/flags/china.svg";
-import french from "@assets/images/flags/french.svg";
 import ae from "@assets/images/flags/ae.svg";
 
 import img1 from "@assets/images/products/img-1.png";
@@ -39,39 +33,9 @@ export default {
         title: "English",
       },
       {
-        flag: spain,
-        language: "sp",
-        title: "Española",
-      },
-      {
-        flag: germany,
-        language: "gr",
-        title: "Deutsche",
-      },
-      {
-        flag: italy,
-        language: "it",
-        title: "italiana",
-      },
-      {
-        flag: russia,
-        language: "ru",
-        title: "русский",
-      },
-      {
-        flag: china,
-        language: "ch",
-        title: "中國人",
-      },
-      {
-        flag: french,
-        language: "fr",
-        title: "Français",
-      },
-      {
         flag: ae,
         language: "ar",
-        title: "Arabic",
+        title: "العربية",
       },
       ],
       cartItems: [
@@ -224,8 +188,11 @@ export default {
       this.lan = locale;
       this.text = country;
       this.flag = flag;
-      document.getElementById("header-lang-img").setAttribute("src", flag);
+      if (document.getElementById("header-lang-img")) {
+        document.getElementById("header-lang-img").setAttribute("src", flag);
+      }
       i18n.global.locale = locale;
+      sessionStorage.setItem("locale", locale);
     },
     toggleDarkMode() {
 
@@ -252,10 +219,14 @@ export default {
     },
   },
   mounted() {
-    this.flag = this.$i18n.locale;
+    this.lan = i18n.global.locale || sessionStorage.getItem("locale") || "en";
     this.languages.forEach((item) => {
-      if (item.language == this.flag) {
-        document.getElementById("header-lang-img") ? document.getElementById("header-lang-img").setAttribute("src", item.flag) : '';
+      if (item.language == this.lan) {
+        this.text = item.title;
+        this.flag = item.flag;
+        if (document.getElementById("header-lang-img")) {
+          document.getElementById("header-lang-img").setAttribute("src", item.flag);
+        }
       }
     });
 
@@ -314,6 +285,24 @@ export default {
         </div>
 
         <div class="d-flex align-items-center">
+
+          <!-- Language Selector -->
+          <BDropdown variant="link" class="ms-1 header-item" toggle-class="btn-icon btn-topbar rounded-circle" menu-class="dropdown-menu-end">
+            <template #button-content>
+              <img id="header-lang-img" :src="flag || languages.find(l => l.language === lan)?.flag || languages[0].flag" alt="Language" height="16" class="rounded" />
+            </template>
+            <template v-for="(lang, index) in languages" :key="index">
+              <BButton 
+                variant="none" 
+                class="dropdown-item notify-item language py-2" 
+                :class="{ active: lan === lang.language }"
+                @click="setLanguage(lang.language, lang.title, lang.flag)"
+              >
+                <img :src="lang.flag" alt="user-image" class="me-2 rounded" height="18" />
+                <span class="align-middle">{{ lang.title }}</span>
+              </BButton>
+            </template>
+          </BDropdown>
 
 
 

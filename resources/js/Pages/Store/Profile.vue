@@ -4,6 +4,9 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import Layout from '@/Layouts/main.vue';
 import { BRow, BCol, BCard, BCardBody, BButton } from 'bootstrap-vue-next';
 import Swal from 'sweetalert2';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { store } = usePage().props;
 
@@ -30,19 +33,19 @@ const submit = () => {
     form.post(route('store.profile.update'), {
                         onSuccess: () => {
                             Swal.fire({
-                                title: 'نجح!',
-                                text: 'تم تحديث الملف الشخصي بنجاح',
+                                title: t('t-success'),
+                                text: t('t-profile-updated-successfully'),
                                 icon: 'success',
-                                confirmButtonText: 'حسناً'
+                                confirmButtonText: t('t-ok')
                             });
                             form.reset('password', 'password_confirmation', 'photo');
                         },
         onError: (errors) => {
             Swal.fire({
-                title: 'خطأ!',
-                text: 'حدث خطأ أثناء التحديث',
+                title: t('t-error'),
+                text: t('t-error-updating'),
                 icon: 'error',
-                confirmButtonText: 'حسناً'
+                confirmButtonText: t('t-ok')
             });
         }
     });
@@ -54,7 +57,7 @@ const submit = () => {
         <BRow>
             <BCol lg="12">
                 <div class="d-flex align-items-center justify-content-between mb-4">
-                    <h4 class="mb-0">الملف الشخصي</h4>
+                    <h4 class="mb-0">{{ t('t-profile') }}</h4>
                 </div>
             </BCol>
         </BRow>
@@ -68,7 +71,7 @@ const submit = () => {
                             <BRow>
                                 <BCol md="12">
                                     <div class="mb-4 text-center">
-                                        <label class="form-label fw-semibold d-block">الصورة الشخصية</label>
+                                        <label class="form-label fw-semibold d-block">{{ t('t-profile-photo') }}</label>
                                         <div v-if="imagePreview" class="mb-3">
                                             <img 
                                                 :src="imagePreview" 
@@ -91,7 +94,7 @@ const submit = () => {
                                             style="max-width: 400px; margin: 0 auto;"
                                             :class="{ 'is-invalid': form.errors.photo }"
                                         />
-                                        <small class="text-muted d-block mt-2">الحد الأقصى للحجم: 2 ميجا. الصيغ المدعومة: JPG, PNG, GIF</small>
+                                        <small class="text-muted d-block mt-2">{{ t('t-max-size') }}</small>
                                         <div v-if="form.errors.photo" class="invalid-feedback d-block">
                                             {{ form.errors.photo }}
                                         </div>
@@ -103,7 +106,7 @@ const submit = () => {
                             <BRow>
                                 <BCol md="6">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label fw-semibold">اسم المتجر *</label>
+                                        <label for="name" class="form-label fw-semibold">{{ t('t-store-name-required') }}</label>
                                         <input 
                                             v-model="form.name" 
                                             type="text" 
@@ -119,7 +122,7 @@ const submit = () => {
                                 </BCol>
                                 <BCol md="6">
                                     <div class="mb-3">
-                                        <label for="phone" class="form-label fw-semibold">رقم الهاتف *</label>
+                                        <label for="phone" class="form-label fw-semibold">{{ t('t-phone-required') }}</label>
                                         <input 
                                             v-model="form.phone" 
                                             type="text" 
@@ -138,7 +141,7 @@ const submit = () => {
                             <BRow>
                                 <BCol md="12">
                                     <div class="mb-3">
-                                        <label for="email" class="form-label fw-semibold">البريد الإلكتروني</label>
+                                        <label for="email" class="form-label fw-semibold">{{ t('t-email-address') }}</label>
                                         <input 
                                             v-model="form.email" 
                                             type="email" 
@@ -155,12 +158,12 @@ const submit = () => {
 
                             <!-- Password Change -->
                             <hr class="my-4">
-                            <h5 class="mb-3">تغيير كلمة المرور</h5>
+                            <h5 class="mb-3">{{ t('t-change-password') }}</h5>
                             
                             <BRow>
                                 <BCol md="6">
                                     <div class="mb-3">
-                                        <label for="password" class="form-label fw-semibold">كلمة المرور الجديدة</label>
+                                        <label for="password" class="form-label fw-semibold">{{ t('t-new-password') }}</label>
                                         <input 
                                             v-model="form.password" 
                                             type="password" 
@@ -168,7 +171,7 @@ const submit = () => {
                                             id="password"
                                             :class="{ 'is-invalid': form.errors.password }"
                                         />
-                                        <small class="text-muted">اتركه فارغاً للإبقاء على كلمة المرور الحالية</small>
+                                        <small class="text-muted">{{ t('t-leave-blank-to-keep') }}</small>
                                         <div v-if="form.errors.password" class="invalid-feedback">
                                             {{ form.errors.password }}
                                         </div>
@@ -176,7 +179,7 @@ const submit = () => {
                                 </BCol>
                                 <BCol md="6">
                                     <div class="mb-3">
-                                        <label for="password_confirmation" class="form-label fw-semibold">تأكيد كلمة المرور</label>
+                                        <label for="password_confirmation" class="form-label fw-semibold">{{ t('t-confirm-password') }}</label>
                                         <input 
                                             v-model="form.password_confirmation" 
                                             type="password" 
@@ -199,8 +202,8 @@ const submit = () => {
                                     :disabled="form.processing"
                                     class="px-4"
                                 >
-                                    <span v-if="form.processing">جاري الحفظ...</span>
-                                    <span v-else>حفظ التغييرات</span>
+                                    <span v-if="form.processing">{{ t('t-saving') }}</span>
+                                    <span v-else>{{ t('t-save-changes') }}</span>
                                 </BButton>
                             </div>
                         </form>

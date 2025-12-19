@@ -5,6 +5,9 @@ import Layout from '@/Layouts/main.vue';
 import PageHeader from '@/Components/page-header.vue';
 import { BRow, BCol, BCard, BCardBody, BTable, BPagination, BBadge, BButton } from 'bootstrap-vue-next';
 import Swal from 'sweetalert2';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { store, notifications } = usePage().props;
 
@@ -41,13 +44,13 @@ const markAsRead = (notificationId) => {
 // Mark all as read
 const markAllAsRead = () => {
     Swal.fire({
-        title: 'Are you sure?',
-        text: 'Mark all notifications as read?',
+        title: t('t-are-you-sure-mark-all'),
+        text: t('t-mark-all-as-read-question'),
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, mark all as read'
+        confirmButtonText: t('t-yes-mark-all-as-read')
     }).then((result) => {
         if (result.isConfirmed) {
             router.post(route('store.notifications.read-all'), {}, {
@@ -56,8 +59,8 @@ const markAllAsRead = () => {
                 onSuccess: () => {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Success!',
-                        text: 'All notifications marked as read',
+                        title: t('t-success'),
+                        text: t('t-all-notifications-marked'),
                         timer: 2000,
                         showConfirmButton: false
                     });
@@ -70,15 +73,15 @@ const markAllAsRead = () => {
 
 <template>
     <Layout>
-        <Head title="Notifications" />
-        <PageHeader title="Notifications" pageTitle="Dashboard" />
+        <Head :title="t('t-notifications')" />
+        <PageHeader :title="t('t-notifications')" :pageTitle="t('t-store-dashboard')" />
 
         <BRow>
             <BCol lg="12">
                 <BCard no-body>
                     <BCardBody>
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <h5 class="card-title mb-0">Notifications</h5>
+                            <h5 class="card-title mb-0">{{ t('t-notifications') }}</h5>
                             <BButton 
                                 v-if="notifications && notifications.data && notifications.data.length > 0"
                                 variant="primary" 
@@ -86,13 +89,13 @@ const markAllAsRead = () => {
                                 @click="markAllAsRead"
                             >
                                 <i class="ri-check-double-line me-1"></i>
-                                Mark All as Read
+                                {{ t('t-mark-all-as-read') }}
                             </BButton>
                         </div>
 
                         <div v-if="notifications && notifications.data && notifications.data.length > 0">
                             <div class="mb-3">
-                                <span class="text-muted">Total Notifications: <strong>{{ notifications.total }}</strong></span>
+                                <span class="text-muted">{{ t('t-total-transactions-count') }}: <strong>{{ notifications.total }}</strong></span>
                             </div>
 
                             <div class="table-responsive">
@@ -102,10 +105,10 @@ const markAllAsRead = () => {
                                     :items="notifications.data" 
                                     :fields="[
                                         { key: 'read_status', label: '', sortable: false },
-                                        { key: 'title', label: 'Title', sortable: false },
-                                        { key: 'body', label: 'Message', sortable: false },
-                                        { key: 'time_ago', label: 'Time', sortable: false },
-                                        { key: 'actions', label: 'Actions' }
+                                        { key: 'title', label: t('t-title'), sortable: false },
+                                        { key: 'body', label: t('t-message'), sortable: false },
+                                        { key: 'time_ago', label: t('t-time'), sortable: false },
+                                        { key: 'actions', label: t('t-actions') }
                                     ]"
                                     class="table-nowrap"
                                 >
@@ -142,9 +145,9 @@ const markAllAsRead = () => {
                                             @click="markAsRead(item.id)"
                                         >
                                             <i class="ri-check-line me-1"></i>
-                                            Mark as Read
+                                            {{ t('t-mark-as-read') }}
                                         </BButton>
-                                        <span v-else class="text-muted small">Read</span>
+                                        <span v-else class="text-muted small">{{ t('t-read') }}</span>
                                     </template>
                                 </BTable>
                             </div>
@@ -160,7 +163,7 @@ const markAllAsRead = () => {
                         </div>
                         <div v-else class="text-center py-4">
                             <i class="ri-notification-off-line" style="font-size: 48px; color: #ccc;"></i>
-                            <p class="text-muted mt-3">No notifications found</p>
+                            <p class="text-muted mt-3">{{ t('t-no-notifications-found') }}</p>
                         </div>
                     </BCardBody>
                 </BCard>

@@ -35,7 +35,7 @@ class FortifyServiceProvider extends ServiceProvider
 
         // Custom authentication logic to allow login with username or email
         Fortify::authenticateUsing(function (Request $request) {
-            $field = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
+            $field = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
             
             $user = \App\Models\User::where($field, $request->input('email'))->first();
             

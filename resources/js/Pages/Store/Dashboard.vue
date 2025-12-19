@@ -4,6 +4,9 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import Layout from '@/Layouts/main.vue';
 import PageHeader from '@/Components/page-header.vue';
 import { BRow, BCol, BCard, BCardBody, BTable, BPagination, BButton, BBadge } from 'bootstrap-vue-next';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { store, stats, transactions } = usePage().props;
 
@@ -70,7 +73,7 @@ const printQrCode = () => {
             </head>
             <body>
                 <div class="qr-container">
-                    <h2>${store.name} - QR Code</h2>
+                    <h2>${store.name} - ${t('t-store-qr-code')}</h2>
                     <img src="${qrCodeUrl.value}" alt="Store QR Code" />
                 </div>
             </body>
@@ -85,8 +88,8 @@ const printQrCode = () => {
 
 <template>
     <Layout>
-        <Head title="Store Dashboard" />
-        <PageHeader title="لوحة تحكم المتجر" pageTitle="Dashboard" />
+        <Head :title="t('t-store-dashboard-title')" />
+        <PageHeader :title="t('t-store-dashboard-title')" :pageTitle="t('t-store-dashboard')" />
 
         <!-- Statistics Cards -->
         <BRow class="mb-4">
@@ -103,7 +106,7 @@ const printQrCode = () => {
                         <h4 class="mb-1">
                             <span>{{ formatAmount(stats.total_payments) }}</span>
                         </h4>
-                        <p class="text-muted mb-0">إجمالي المدفوعات</p>
+                        <p class="text-muted mb-0">{{ t('t-total-payments') }}</p>
                     </BCardBody>
                 </BCard>
             </BCol>
@@ -121,7 +124,7 @@ const printQrCode = () => {
                         <h4 class="mb-1">
                             <span>{{ stats.transaction_count }}</span>
                         </h4>
-                        <p class="text-muted mb-0">عدد المعاملات</p>
+                        <p class="text-muted mb-0">{{ t('t-transaction-count') }}</p>
                     </BCardBody>
                 </BCard>
             </BCol>
@@ -139,7 +142,7 @@ const printQrCode = () => {
                         <h4 class="mb-1">
                             <span>{{ formatAmount(stats.current_balance) }}</span>
                         </h4>
-                        <p class="text-muted mb-0">الرصيد الحالي (دين على الإدارة)</p>
+                        <p class="text-muted mb-0">{{ t('t-current-balance-debt') }}</p>
                     </BCardBody>
                 </BCard>
             </BCol>
@@ -151,7 +154,7 @@ const printQrCode = () => {
                 <BCard no-body>
                     <BCardBody>
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <h5 class="card-title mb-0">QR Code للمتجر</h5>
+                            <h5 class="card-title mb-0">{{ t('t-store-qr-code') }}</h5>
                             <div>
                                 <BButton 
                                     variant="primary" 
@@ -160,14 +163,14 @@ const printQrCode = () => {
                                     target="_blank"
                                 >
                                     <i class="ri-download-line me-1"></i>
-                                    تحميل
+                                    {{ t('t-download') }}
                                 </BButton>
                                 <BButton 
                                     variant="info"
                                     @click="printQrCode"
                                 >
                                     <i class="ri-printer-line me-1"></i>
-                                    طباعة
+                                    {{ t('t-print') }}
                                 </BButton>
                             </div>
                         </div>
@@ -182,7 +185,7 @@ const printQrCode = () => {
                             </div>
                             <p class="text-muted mb-0">
                                 <strong>{{ store.name }}</strong><br>
-                                <small>امسح هذا الرمز للدفع</small>
+                                <small>{{ t('t-scan-to-pay') }}</small>
                             </p>
                         </div>
                     </BCardBody>
@@ -196,12 +199,12 @@ const printQrCode = () => {
                 <BCard no-body>
                     <BCardBody>
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <h5 class="card-title mb-0">سجل المعاملات</h5>
+                            <h5 class="card-title mb-0">{{ t('t-transactions-log') }}</h5>
                         </div>
 
                         <div v-if="transactions && transactions.data && transactions.data.length > 0">
                             <div class="mb-3">
-                                <span class="text-muted">إجمالي المعاملات: <strong>{{ transactions.total }}</strong></span>
+                                <span class="text-muted">{{ t('t-total-transactions-count') }}: <strong>{{ transactions.total }}</strong></span>
                             </div>
 
                             <div class="table-responsive">
@@ -211,10 +214,10 @@ const printQrCode = () => {
                                     :items="transactions.data" 
                                     :fields="[
                                         { key: 'row_number', label: '#', sortable: false },
-                                        { key: 'customer_name', label: 'الوصف', sortable: false },
-                                        { key: 'amount', label: 'المبلغ', sortable: true },
-                                        { key: 'reference_id', label: 'رقم المرجع', sortable: false },
-                                        { key: 'created_at', label: 'التاريخ', sortable: true }
+                                        { key: 'customer_name', label: t('t-description'), sortable: false },
+                                        { key: 'amount', label: t('t-amount'), sortable: true },
+                                        { key: 'reference_id', label: t('t-reference-id'), sortable: false },
+                                        { key: 'created_at', label: t('t-date'), sortable: true }
                                     ]"
                                     class="table-nowrap"
                                 >
@@ -225,14 +228,14 @@ const printQrCode = () => {
                                     <template #cell(customer_name)="{ item }">
                                         <div>
                                             <span v-if="item.customer_name">{{ item.customer_name }}</span>
-                                            <span v-else class="text-muted">Unknown</span>
+                                            <span v-else class="text-muted">{{ t('t-unknown') }}</span>
                                             <br v-if="item.transaction_type_label">
                                             <small class="text-muted" v-if="item.transaction_type_label">
                                                 {{ item.transaction_type_label }}
                                             </small>
                                             <br v-if="item.note">
                                             <small class="text-muted" v-if="item.note">
-                                                Note: {{ item.note }}
+                                                {{ t('t-note') }}: {{ item.note }}
                                             </small>
                                         </div>
                                     </template>
@@ -242,7 +245,7 @@ const printQrCode = () => {
                                             class="fw-bold"
                                             :class="item.is_credit ? 'text-success' : 'text-danger'"
                                         >
-                                            {{ item.amount_formatted || (item.is_credit ? '+' : '-') + formatAmount(item.amount) }} Points
+                                            {{ item.amount_formatted || (item.is_credit ? '+' : '-') + formatAmount(item.amount) }} {{ t('t-points') }}
                                         </span>
                                     </template>
 
@@ -266,7 +269,7 @@ const printQrCode = () => {
                             </div>
                         </div>
                         <div v-else class="text-center py-4">
-                            <p class="text-muted">لا توجد معاملات</p>
+                            <p class="text-muted">{{ t('t-no-transactions') }}</p>
                         </div>
                     </BCardBody>
                 </BCard>

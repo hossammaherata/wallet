@@ -6,6 +6,9 @@ import PageHeader from '@/Components/page-header.vue';
 import CardHeader from '@/common/card-header.vue';
 import { BContainer, BRow, BCol, BCard, BCardBody, BTable, BPagination, BButton, BBadge, BFormSelect } from 'bootstrap-vue-next';
 import { useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { transactions, filters } = usePage().props;
 
@@ -85,47 +88,47 @@ const getTypeBadge = (type) => {
 
 <template>
     <Layout>
-        <Head title="Transactions" />
-        <PageHeader title="Transactions" pageTitle="Transactions Management" />
+        <Head :title="t('t-transactions')" />
+        <PageHeader :title="t('t-transactions')" :pageTitle="t('t-transactions-management')" />
 
         <BRow>
             <BCol lg="12">
                 <BCard no-body>
-                    <CardHeader title="Transactions List" />
+                    <CardHeader :title="t('t-transactions-list')" />
                     <BCardBody>
                         <!-- Filters -->
                         <div class="mb-4">
                             <BRow>
                                 <BCol md="3">
                                     <div class="mb-3">
-                                        <label class="form-label">Search</label>
+                                        <label class="form-label">{{ t('t-search') }}</label>
                                         <input 
                                             v-model="form.keyword" 
                                             type="text" 
                                             class="form-control" 
-                                            placeholder="Reference ID, Name, Phone..."
+                                            :placeholder="t('t-reference-id-name-phone')"
                                         />
                                     </div>
                                 </BCol>
                                 <BCol md="2">
                                     <div class="mb-3">
-                                        <label class="form-label">Status</label>
+                                        <label class="form-label">{{ t('t-status') }}</label>
                                         <BFormSelect v-model="form.status">
-                                            <option value="">All</option>
-                                            <option value="success">Success</option>
-                                            <option value="pending">Pending</option>
-                                            <option value="failed">Failed</option>
+                                            <option value="">{{ t('t-all') }}</option>
+                                            <option value="success">{{ t('t-success') }}</option>
+                                            <option value="pending">{{ t('t-pending') }}</option>
+                                            <option value="failed">{{ t('t-failed') }}</option>
                                         </BFormSelect>
                                     </div>
                                 </BCol>
                                 <BCol md="2">
                                     <div class="mb-3">
-                                        <label class="form-label">Type</label>
+                                        <label class="form-label">{{ t('t-type') }}</label>
                                         <BFormSelect v-model="form.type">
-                                            <option value="">All</option>
-                                            <option value="purchase">Purchase</option>
-                                            <option value="transfer">Transfer</option>
-                                            <option value="credit">Credit</option>
+                                            <option value="">{{ t('t-all') }}</option>
+                                            <option value="purchase">{{ t('t-purchase') }}</option>
+                                            <option value="transfer">{{ t('t-transfer') }}</option>
+                                            <option value="credit">{{ t('t-credit') }}</option>
                                             <!-- <option value="debit">Debit</option> -->
                                             <!-- <option value="refund">Refund</option> -->
                                         </BFormSelect>
@@ -133,7 +136,7 @@ const getTypeBadge = (type) => {
                                 </BCol>
                                 <BCol md="2">
                                     <div class="mb-3">
-                                        <label class="form-label">Date From</label>
+                                        <label class="form-label">{{ t('t-date-from') }}</label>
                                         <input 
                                             v-model="form.date_from" 
                                             type="date" 
@@ -143,7 +146,7 @@ const getTypeBadge = (type) => {
                                 </BCol>
                                 <BCol md="2">
                                     <div class="mb-3">
-                                        <label class="form-label">Date To</label>
+                                        <label class="form-label">{{ t('t-date-to') }}</label>
                                         <input 
                                             v-model="form.date_to" 
                                             type="date" 
@@ -156,10 +159,10 @@ const getTypeBadge = (type) => {
                                 <BCol md="12">
                                     <div class="mb-3">
                                         <BButton variant="primary" @click="applyFilters" class="me-2">
-                                            <i class="ri-search-line me-1"></i> Apply Filters
+                                            <i class="ri-search-line me-1"></i> {{ t('t-apply-filters') }}
                                         </BButton>
                                         <BButton variant="secondary" @click="clearFilters">
-                                            <i class="ri-refresh-line me-1"></i> Reset
+                                            <i class="ri-refresh-line me-1"></i> {{ t('t-reset') }}
                                         </BButton>
                                     </div>
                                 </BCol>
@@ -168,7 +171,7 @@ const getTypeBadge = (type) => {
 
                         <!-- Total count display -->
                         <div class="mb-3">
-                            <span class="text-muted">Total Transactions: <strong>{{ transactions.total }}</strong></span>
+                            <span class="text-muted">{{ t('t-total-transactions') }}: <strong>{{ transactions.total }}</strong></span>
                         </div>
 
                         <div class="table-responsive">
@@ -178,14 +181,14 @@ const getTypeBadge = (type) => {
                                 :items="transactions.data" 
                                 :fields="[
                                     { key: 'row_number', label: '#', sortable: false },
-                                    { key: 'reference_id', label: 'Reference ID', sortable: true },
-                                    { key: 'from_user', label: 'From', sortable: false },
-                                    { key: 'to_user', label: 'To', sortable: false },
-                                    { key: 'amount', label: 'Amount', sortable: true },
-                                    { key: 'type', label: 'Type', sortable: true },
-                                    { key: 'status', label: 'Status', sortable: true },
-                                    { key: 'created_at', label: 'Created At', sortable: true },
-                                    { key: 'actions', label: 'Actions' }
+                                    { key: 'reference_id', label: t('t-reference-id'), sortable: true },
+                                    { key: 'from_user', label: t('t-from'), sortable: false },
+                                    { key: 'to_user', label: t('t-to'), sortable: false },
+                                    { key: 'amount', label: t('t-amount'), sortable: true },
+                                    { key: 'type', label: t('t-type'), sortable: true },
+                                    { key: 'status', label: t('t-status'), sortable: true },
+                                    { key: 'created_at', label: t('t-created-at'), sortable: true },
+                                    { key: 'actions', label: t('t-actions') }
                                 ]"
                                 class="table-nowrap"
                             >
@@ -202,7 +205,7 @@ const getTypeBadge = (type) => {
                                         {{ item.from_wallet.user.name }}<br>
                                         <small class="text-muted">{{ item.from_wallet.user.phone }}</small>
                                     </span>
-                                    <BBadge v-else variant="secondary">SYSTEM</BBadge>
+                                    <BBadge v-else variant="secondary">{{ t('t-system') }}</BBadge>
                                 </template>
 
                                 <template #cell(to_user)="{ item }">
@@ -229,7 +232,7 @@ const getTypeBadge = (type) => {
                                             v-else-if="item.is_debit || (item.has_debit && !item.has_credit)" 
                                             class="ri-arrow-up-line text-danger"
                                         ></i>
-                                        {{ item.display_amount || formatAmount(item.amount) }} Points
+                                        {{ item.display_amount || formatAmount(item.amount) }} {{ t('t-points') }}
                                     </span>
                                 </template>
 
@@ -254,7 +257,7 @@ const getTypeBadge = (type) => {
                                         :href="route('admin.transactions.show', item.id)" 
                                         class="btn btn-info btn-sm"
                                     >
-                                        View
+                                        {{ t('t-view') }}
                                     </Link>
                                 </template>
                             </BTable>

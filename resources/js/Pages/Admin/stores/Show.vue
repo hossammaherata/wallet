@@ -6,6 +6,9 @@ import CardHeader from "@/common/card-header.vue";
 import { usePage, Link, router, useForm } from '@inertiajs/vue3';
 import { BRow, BCol, BCard, BCardBody, BTable, BPagination, BBadge, BModal, BButton, BFormInput, BFormTextarea } from 'bootstrap-vue-next';
 import Swal from 'sweetalert2';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { store, transactions } = usePage().props;
 
@@ -59,8 +62,8 @@ const recordExternalPayment = () => {
     if (!externalPaymentForm.amount || parseFloat(externalPaymentForm.amount) <= 0) {
         Swal.fire({
             icon: 'error',
-            title: 'Error!',
-            text: 'Please enter a valid amount'
+            title: t('t-error'),
+            text: t('t-please-enter-valid-amount')
         });
         return;
     }
@@ -73,8 +76,8 @@ const recordExternalPayment = () => {
             externalPaymentForm.reset();
             Swal.fire({
                 icon: 'success',
-                title: 'Success!',
-                text: 'External payment recorded successfully',
+                title: t('t-success'),
+                text: t('t-external-payment-recorded'),
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -83,8 +86,8 @@ const recordExternalPayment = () => {
         onError: (errors) => {
             Swal.fire({
                 icon: 'error',
-                title: 'Error!',
-                text: errors.message || errors.amount?.[0] || 'An error occurred while recording the payment'
+                title: t('t-error'),
+                text: errors.message || errors.amount?.[0] || t('t-an-error-occurred')
             });
         }
     });
@@ -108,11 +111,11 @@ const updateWalletStatus = (event) => {
         preserveScroll: true,
         onSuccess: (page) => {
             // Show success message
-            const statusText = status === 'locked' ? 'Locked' : 'Active';
+            const statusText = status === 'locked' ? t('t-locked') : t('t-active');
             Swal.fire({
                 icon: 'success',
-                title: 'Success!',
-                text: `Wallet status updated to: ${statusText}`,
+                title: t('t-success'),
+                text: `${t('t-wallet-status-updated')} ${statusText}`,
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -123,8 +126,8 @@ const updateWalletStatus = (event) => {
         onError: (errors) => {
             Swal.fire({
                 icon: 'error',
-                title: 'Error!',
-                text: errors.message || 'An error occurred while updating wallet status',
+                title: t('t-error'),
+                text: errors.message || t('t-an-error-occurred'),
             });
         }
     });
@@ -133,13 +136,13 @@ const updateWalletStatus = (event) => {
 
 <template>
     <Layout>
-        <PageHeader title="Store Details" pageTitle="Stores Management" :href="route('admin.stores.index')">
+        <PageHeader :title="t('t-store-details')" :pageTitle="t('t-stores-management')" :href="route('admin.stores.index')">
             <template #actions>
                 <Link :href="route('admin.stores.edit', store.id)" class="btn btn-warning me-2">
-                    Edit Store
+                    {{ t('t-edit-store') }}
                 </Link>
                 <Link :href="route('admin.stores.index')" class="btn btn-secondary">
-                    Back to List
+                    {{ t('t-back-to-list') }}
                 </Link>
             </template>
         </PageHeader>
@@ -147,7 +150,7 @@ const updateWalletStatus = (event) => {
         <BRow>
             <BCol lg="12">
                 <BCard no-body>
-                    <CardHeader title="Store Information" />
+                    <CardHeader :title="t('t-store-information')" />
                     <BCardBody>
                         <!-- Profile Photo -->
                         <BRow>
@@ -165,7 +168,7 @@ const updateWalletStatus = (event) => {
                                         <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
                                             <i class="ri-store-2-line" style="font-size: 3rem; color: #999;"></i>
                                         </div>
-                                        <p class="text-muted mt-2 small">No profile photo uploaded</p>
+                                        <p class="text-muted mt-2 small">{{ t('t-no-profile-photo') }}</p>
                                     </div>
                                 </div>
                             </BCol>
@@ -174,13 +177,13 @@ const updateWalletStatus = (event) => {
                         <BRow>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Store Name</label>
+                                    <label class="form-label fw-semibold">{{ t('t-store-name') }}</label>
                                     <p class="form-control-plaintext">{{ store.name }}</p>
                                 </div>
                             </BCol>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Phone</label>
+                                    <label class="form-label fw-semibold">{{ t('t-phone') }}</label>
                                     <p class="form-control-plaintext">{{ store.phone || '-' }}</p>
                                 </div>
                             </BCol>
@@ -189,13 +192,13 @@ const updateWalletStatus = (event) => {
                         <BRow>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Email Address</label>
+                                    <label class="form-label fw-semibold">{{ t('t-email-address') }}</label>
                                     <p class="form-control-plaintext">{{ store.email || '-' }}</p>
                                 </div>
                             </BCol>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Status</label>
+                                    <label class="form-label fw-semibold">{{ t('t-status') }}</label>
                                     <p class="form-control-plaintext">
                                         <BBadge :variant="store.status === 'active' ? 'success' : 'danger'">
                                             {{ store.status || 'N/A' }}
@@ -208,13 +211,13 @@ const updateWalletStatus = (event) => {
                         <BRow>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Created At</label>
+                                    <label class="form-label fw-semibold">{{ t('t-created-at') }}</label>
                                     <p class="form-control-plaintext">{{ formatDate(store.created_at) }}</p>
                                 </div>
                             </BCol>
                             <BCol md="6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Last Updated</label>
+                                    <label class="form-label fw-semibold">{{ t('t-last-updated') }}</label>
                                     <p class="form-control-plaintext">{{ formatDate(store.updated_at) }}</p>
                                 </div>
                             </BCol>
@@ -228,26 +231,26 @@ const updateWalletStatus = (event) => {
         <BRow class="mt-4">
             <BCol lg="12">
                 <BCard no-body>
-                    <CardHeader title="Wallet Information" />
+                    <CardHeader :title="t('t-wallet-information')" />
                     <BCardBody>
                         <BRow>
                             <BCol md="4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Current Balance</label>
+                                    <label class="form-label fw-semibold">{{ t('t-current-balance') }}</label>
                                     <p class="form-control-plaintext">
                                         <span class="h4 text-primary fw-bold">
-                                            {{ formatAmount(store.wallet?.balance || 0) }} Points
+                                            {{ formatAmount(store.wallet?.balance || 0) }} {{ t('t-points') }}
                                         </span>
                                     </p>
-                                    <small class="text-muted">(Debt to Administration)</small>
+                                    <small class="text-muted">{{ t('t-debt-to-administration') }}</small>
                                 </div>
                             </BCol>
                             <BCol md="4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Wallet Status</label>
+                                    <label class="form-label fw-semibold">{{ t('t-wallet-status') }}</label>
                                     <div class="d-flex align-items-center gap-2">
                                         <BBadge :variant="store.wallet?.status === 'active' ? 'success' : 'danger'">
-                                            {{ store.wallet?.status === 'active' ? 'Active' : (store.wallet?.status === 'locked' ? 'Locked' : 'N/A') }}
+                                            {{ store.wallet?.status === 'active' ? t('t-active') : (store.wallet?.status === 'locked' ? t('t-locked') : 'N/A') }}
                                         </BBadge>
                                         <form 
                                             v-if="store.wallet" 
@@ -261,7 +264,7 @@ const updateWalletStatus = (event) => {
                                                 :class="store.wallet.status === 'active' ? 'btn-warning' : 'btn-success'"
                                             >
                                                 <i :class="store.wallet.status === 'active' ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
-                                                {{ store.wallet.status === 'active' ? 'Lock Wallet' : 'Unlock Wallet' }}
+                                                {{ store.wallet.status === 'active' ? t('t-lock-wallet') : t('t-unlock-wallet') }}
                                             </button>
                                         </form>
                                     </div>
@@ -269,7 +272,7 @@ const updateWalletStatus = (event) => {
                             </BCol>
                             <BCol md="4">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Record External Payment</label>
+                                    <label class="form-label fw-semibold">{{ t('t-record-external-payment') }}</label>
                                     <div>
                                         <button 
                                             type="button" 
@@ -277,7 +280,7 @@ const updateWalletStatus = (event) => {
                                             @click="showExternalPaymentModal = true"
                                         >
                                             <i class="ri-money-dollar-circle-line me-1"></i>
-                                            Record Payment
+                                            {{ t('t-record-payment') }}
                                         </button>
                                     </div>
                                 </div>
@@ -292,11 +295,11 @@ const updateWalletStatus = (event) => {
         <BRow class="mt-4">
             <BCol lg="12">
                 <BCard no-body>
-                    <CardHeader title="Transactions History" />
+                    <CardHeader :title="t('t-transactions-history')" />
                     <BCardBody>
                         <div v-if="transactions && transactions.data && transactions.data.length > 0">
                             <div class="mb-3">
-                                <span class="text-muted">Total Transactions: <strong>{{ transactions.total }}</strong></span>
+                                <span class="text-muted">{{ t('t-total-transactions') }}: <strong>{{ transactions.total }}</strong></span>
                             </div>
 
                             <div class="table-responsive">
@@ -306,14 +309,14 @@ const updateWalletStatus = (event) => {
                                     :items="transactions.data" 
                                     :fields="[
                                         { key: 'row_number', label: '#', sortable: false },
-                                        { key: 'reference_id', label: 'Reference ID', sortable: true },
-                                        { key: 'from_user', label: 'From', sortable: false },
-                                        { key: 'to_user', label: 'To', sortable: false },
-                                        { key: 'amount', label: 'Amount', sortable: true },
-                                        { key: 'type', label: 'Type', sortable: true },
-                                        { key: 'status', label: 'Status', sortable: true },
-                                        { key: 'created_at', label: 'Date', sortable: true },
-                                        { key: 'actions', label: 'Actions' }
+                                        { key: 'reference_id', label: t('t-reference-id'), sortable: true },
+                                        { key: 'from_user', label: t('t-from'), sortable: false },
+                                        { key: 'to_user', label: t('t-to'), sortable: false },
+                                        { key: 'amount', label: t('t-amount'), sortable: true },
+                                        { key: 'type', label: t('t-type'), sortable: true },
+                                        { key: 'status', label: t('t-status'), sortable: true },
+                                        { key: 'created_at', label: t('t-date'), sortable: true },
+                                        { key: 'actions', label: t('t-actions') }
                                     ]"
                                     class="table-nowrap"
                                 >
@@ -327,13 +330,13 @@ const updateWalletStatus = (event) => {
 
                                     <template #cell(from_user)="{ item }">
                                         <span v-if="item.type === 'debit' && item.meta && item.meta.payment_type === 'external'">
-                                            <BBadge variant="warning">External Payment</BBadge>
+                                            <BBadge variant="warning">{{ t('t-external-payment') }}</BBadge>
                                         </span>
                                         <span v-else-if="item.from_wallet?.user">
                                             {{ item.from_wallet.user.name }}<br>
                                             <small class="text-muted">{{ item.from_wallet.user.phone }}</small>
                                         </span>
-                                        <BBadge v-else variant="secondary">SYSTEM</BBadge>
+                                        <BBadge v-else variant="secondary">{{ t('t-system') }}</BBadge>
                                     </template>
 
                                     <template #cell(to_user)="{ item }">
@@ -363,7 +366,7 @@ const updateWalletStatus = (event) => {
                                                 v-else-if="item.is_debit" 
                                                 class="ri-arrow-up-line text-danger"
                                             ></i>
-                                            {{ item.display_amount || formatAmount(item.amount) }} Points
+                                            {{ item.display_amount || formatAmount(item.amount) }} {{ t('t-points') }}
                                         </span>
                                     </template>
 
@@ -388,7 +391,7 @@ const updateWalletStatus = (event) => {
                                             :href="route('admin.transactions.show', item.id)" 
                                             class="btn btn-info btn-sm"
                                         >
-                                            View
+                                            {{ t('t-view') }}
                                         </Link>
                                     </template>
                                 </BTable>
@@ -404,7 +407,7 @@ const updateWalletStatus = (event) => {
                             </div>
                         </div>
                         <div v-else class="text-center py-4">
-                            <p class="text-muted">No transactions found</p>
+                            <p class="text-muted">{{ t('t-no-transactions-found') }}</p>
                         </div>
                     </BCardBody>
                 </BCard>
@@ -414,19 +417,19 @@ const updateWalletStatus = (event) => {
         <!-- External Payment Modal -->
         <BModal 
             v-model="showExternalPaymentModal" 
-            title="Record External Payment" 
+            :title="t('t-record-external-payment')" 
             hide-footer
             size="md"
         >
             <form @submit.prevent="recordExternalPayment">
                 <div class="mb-3">
-                    <label class="form-label">Amount <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ t('t-amount') }} <span class="text-danger">*</span></label>
                     <BFormInput
                         v-model="externalPaymentForm.amount"
                         type="number"
                         step="0.01"
                         min="0.01"
-                        placeholder="Enter amount"
+                        :placeholder="t('t-enter-amount')"
                         required
                     />
                     <div v-if="externalPaymentForm.errors.amount" class="text-danger small mt-1">
@@ -435,32 +438,32 @@ const updateWalletStatus = (event) => {
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Note (Optional)</label>
+                    <label class="form-label">{{ t('t-note-optional') }}</label>
                     <BFormTextarea
                         v-model="externalPaymentForm.note"
                         rows="3"
-                        placeholder="Enter a note about the payment"
+                        :placeholder="t('t-enter-note-about-payment')"
                     />
                 </div>
 
                 <div class="mb-3">
                     <small class="text-muted">
-                        Current Balance: <strong>{{ formatAmount(store.wallet?.balance || 0) }} Points</strong><br>
-                        After Payment: <strong>{{ formatAmount((store.wallet?.balance || 0) - (parseFloat(externalPaymentForm.amount) || 0)) }} Points</strong>
+                        {{ t('t-current-balance') }}: <strong>{{ formatAmount(store.wallet?.balance || 0) }} {{ t('t-points') }}</strong><br>
+                        {{ t('t-after-payment') }}: <strong>{{ formatAmount((store.wallet?.balance || 0) - (parseFloat(externalPaymentForm.amount) || 0)) }} {{ t('t-points') }}</strong>
                     </small>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
                     <BButton variant="secondary" @click="showExternalPaymentModal = false">
-                        Cancel
+                        {{ t('t-cancel') }}
                     </BButton>
                     <BButton 
                         variant="primary" 
                         type="submit"
                         :disabled="externalPaymentForm.processing"
                     >
-                        <span v-if="externalPaymentForm.processing">Recording...</span>
-                        <span v-else>Record Payment</span>
+                        <span v-if="externalPaymentForm.processing">{{ t('t-recording') }}</span>
+                        <span v-else>{{ t('t-record-payment') }}</span>
                     </BButton>
                 </div>
             </form>

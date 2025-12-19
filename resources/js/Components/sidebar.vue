@@ -166,31 +166,31 @@ export default {
               
               <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'admin'">
                 <Link :href="route('admin.users.index')" class="nav-link custom-abc" data-key="t-users">
-                Users Management
+                {{ $t("t-users-management") }}
                 </Link>
               </li>
               
               <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'admin'">
                 <Link :href="route('admin.stores.index')" class="nav-link custom-abc" data-key="t-stores">
-                Stores Management
+                {{ $t("t-stores-management") }}
                 </Link>
               </li>
               
               <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'admin'">
                 <Link :href="route('admin.transactions.index')" class="nav-link custom-abc" data-key="t-transactions">
-                Transactions
+                {{ $t("t-transactions") }}
                 </Link>
               </li>
               
               <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'store'">
                 <Link :href="route('store.dashboard')" class="nav-link custom-abc" data-key="t-store-dashboard">
-                لوحة التحكم
+                {{ $t("t-store-dashboard") }}
                 </Link>
               </li>
               
               <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'store'">
                 <Link :href="route('store.notifications')" class="nav-link custom-abc" data-key="t-notifications">
-                الإشعارات
+                {{ $t("t-notifications") }}
                 </Link>
               </li>
               
