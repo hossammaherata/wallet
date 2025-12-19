@@ -198,7 +198,7 @@ class StoreController extends BaseController
             $updateData = $request->only(['name', 'email', 'phone', 'status']);
             
             if ($request->filled('password')) {
-                $updateData['password'] = Hash::make($request->password);
+                $updateData['password'] = $request->password; // StoreService will hash it
             }
 
             // Handle profile photo upload (same as admin profile)

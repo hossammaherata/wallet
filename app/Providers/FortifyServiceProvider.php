@@ -39,11 +39,30 @@ class FortifyServiceProvider extends ServiceProvider
             
             $user = \App\Models\User::where($field, $request->input('email'))->first();
             
-            if ($user && \Hash::check($request->input('password'), $user->password)) {
-                return $user;
+            if (!$user) {
+                return null;
+            }
+
+            // Check if user is active
+            if (!$user->isActive()) {
+                return null;
+            }
+
+            // For stores and admins, password is required
+            if ($user->isStore() || $user->isAdmin()) {
+                if (!$user->password || !\Hash::check($request->input('password'), $user->password)) {
+                    return null;
+                }
+            }
+            // For regular users, password is optional (can be null)
+            // But if password is provided, it should match
+            else {
+                if ($user->password && !\Hash::check($request->input('password'), $user->password)) {
+                    return null;
+                }
             }
             
-            return null;
+            return $user;
         });
 
         RateLimiter::for('login', function (Request $request) {

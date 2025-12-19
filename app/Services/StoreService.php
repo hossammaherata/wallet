@@ -79,11 +79,15 @@ class StoreService
             throw new \Exception('User is not a store');
         }
 
-        $allowedFields = ['name', 'email', 'phone', 'status','profile_photo_path'];
+        $allowedFields = ['name', 'email', 'phone', 'status', 'profile_photo_path', 'password'];
         $updateData = array_intersect_key($data, array_flip($allowedFields));
 
-        if (isset($data['password'])) {
-            $updateData['password'] = Hash::make($data['password']);
+        // Hash password if provided and not empty
+        if (isset($updateData['password']) && !empty($updateData['password'])) {
+            $updateData['password'] = Hash::make($updateData['password']);
+        } elseif (isset($updateData['password']) && empty($updateData['password'])) {
+            // Remove password from update if it's empty (don't update password)
+            unset($updateData['password']);
         }
         // dd( $updateData);
 
