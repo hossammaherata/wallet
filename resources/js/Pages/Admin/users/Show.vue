@@ -91,10 +91,10 @@ const updateWalletStatus = (event) => {
     <Layout>
         <PageHeader :title="t('t-user-details')" :pageTitle="t('t-all-users')" :href="route('admin.users.index')">
             <template #actions>
-                <Link :href="route('admin.users.edit', user.id)" class="btn btn-warning me-2">
+                <Link :href="route('admin.users.edit', user.id)" class="btn btn-primary me-2">
                     {{ t('t-edit-user') }}
                 </Link>
-                <Link :href="route('admin.users.index')" class="btn btn-secondary">
+                <Link :href="route('admin.users.index')" class="btn btn-outline-primary">
                     {{ t('t-back-to-list') }}
                 </Link>
             </template>

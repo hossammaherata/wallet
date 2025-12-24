@@ -522,7 +522,7 @@ export default {
       </div>
     </div>
 
-    <BButton variant="danger" @click="topFunction" class="btn-icon" id="back-to-top">
+    <BButton variant="primary" @click="topFunction" class="btn-icon" id="back-to-top">
       <i class="ri-arrow-up-line"></i>
     </BButton>
 

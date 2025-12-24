@@ -138,10 +138,10 @@ const updateWalletStatus = (event) => {
     <Layout>
         <PageHeader :title="t('t-store-details')" :pageTitle="t('t-stores-management')" :href="route('admin.stores.index')">
             <template #actions>
-                <Link :href="route('admin.stores.edit', store.id)" class="btn btn-warning me-2">
+                <Link :href="route('admin.stores.edit', store.id)" class="btn btn-primary me-2">
                     {{ t('t-edit-store') }}
                 </Link>
-                <Link :href="route('admin.stores.index')" class="btn btn-secondary">
+                <Link :href="route('admin.stores.index')" class="btn btn-outline-primary">
                     {{ t('t-back-to-list') }}
                 </Link>
             </template>
@@ -276,7 +276,7 @@ const updateWalletStatus = (event) => {
                                     <div>
                                         <button 
                                             type="button" 
-                                            class="btn btn-primary"
+                                            class="btn btn-outline-primary"
                                             @click="showExternalPaymentModal = true"
                                         >
                                             <i class="ri-money-dollar-circle-line me-1"></i>

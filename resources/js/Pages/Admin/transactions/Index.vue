@@ -67,22 +67,22 @@ const formatAmount = (amount) => {
 
 const getStatusBadge = (status) => {
     const badges = {
-        'success': 'success',
-        'pending': 'warning',
-        'failed': 'danger'
+        'success': 'outline-success',
+        'pending': 'outline-warning',
+        'failed': 'outline-danger'
     };
     return badges[status] || 'secondary';
 };
 
 const getTypeBadge = (type) => {
     const badges = {
-        'purchase': 'primary',
-        'transfer': 'info',
-        'credit': 'success',
+        'purchase': 'outline-primary',
+        'transfer': 'outline-info',
+        'credit': 'outline-success',
         // 'debit': 'danger',
-        'refund': 'warning'
+        'refund': 'outline-warning'
     };
-    return badges[type] || 'secondary';
+    return badges[type] || 'outline-secondary';
 };
 </script>
 
@@ -161,7 +161,7 @@ const getTypeBadge = (type) => {
                                         <BButton variant="primary" @click="applyFilters" class="me-2">
                                             <i class="ri-search-line me-1"></i> {{ t('t-apply-filters') }}
                                         </BButton>
-                                        <BButton variant="secondary" @click="clearFilters">
+                                        <BButton variant="outline-primary" @click="clearFilters">
                                             <i class="ri-refresh-line me-1"></i> {{ t('t-reset') }}
                                         </BButton>
                                     </div>
@@ -205,7 +205,7 @@ const getTypeBadge = (type) => {
                                         {{ item.from_wallet.user.name }}<br>
                                         <small class="text-muted">{{ item.from_wallet.user.phone }}</small>
                                     </span>
-                                    <BBadge v-else variant="secondary">{{ t('t-system') }}</BBadge>
+                                    <BBadge v-else variant="outline-secondary">{{ t('t-system') }}</BBadge>
                                 </template>
 
                                 <template #cell(to_user)="{ item }">
@@ -255,7 +255,7 @@ const getTypeBadge = (type) => {
                                 <template #cell(actions)="{ item }">
                                     <Link 
                                         :href="route('admin.transactions.show', item.id)" 
-                                        class="btn btn-info btn-sm"
+                                        class="btn btn-outline-primary btn-sm"
                                     >
                                         {{ t('t-view') }}
                                     </Link>

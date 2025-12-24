@@ -53,23 +53,23 @@ export default {
         <div class="auth-page-content">
             <BContainer>
                 <BRow>
-                    <BCol lg="12">
+                   
+                </BRow>
+
+                <BRow class="justify-content-center" style="border-radius: 16px;">
+                    <BCol md="8" lg="6" xl="5">
+                        <BCard no-body class="mt-4">
+                            <BCol lg="12">
                         <div class="text-center mt-sm-5 mb-4 text-white-50">
                             <div>
                                 <Link href="/" class="d-inline-block auth-logo">
-                                <img src="@assets/images/logo-light.png" alt="" height="20">
+                                <img src="@assets/images/midan.svg" alt="" height="80">
                                 </Link>
                             </div>
-                            <p class="mt-3 fs-15 fw-medium"> Midan</p>
+                         
                         </div>
                     </BCol>
-                </BRow>
-
-                <BRow class="justify-content-center">
-                    <BCol md="8" lg="6" xl="5">
-                        <BCard no-body class="mt-4">
-
-                            <BCardBody class="p-4">
+                            <BCardBody class="p-4" style="margin-top: -24px;">
                                 <div class="text-center mt-2">
                                     <h5 class="text-primary">Welcome Back !</h5>
                                     <p class="text-muted">Sign in to continue to Midan.</p>
@@ -108,7 +108,7 @@ export default {
                                         </div>
 
                                         <div class="mt-4">
-                                            <BButton variant="success" class="w-100" type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">Sign In</BButton>
+                                            <BButton variant="primary" class="w-100" type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">Sign In</BButton>
                                         </div>
 
                                        

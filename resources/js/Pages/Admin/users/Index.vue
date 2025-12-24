@@ -170,12 +170,18 @@ const resetSearch = () => {
                                 <template #cell(actions)="{ item }">
                                     <Link 
                                         :href="route('admin.users.show', item.id)" 
-                                        class="btn btn-info btn-sm me-1"
+                                        class="btn btn-outline-primary btn-sm me-1"
                                     >
                                         {{ t('t-view') }}
                                     </Link>
+                                    <Link 
+                                        :href="route('admin.users.edit', item.id)" 
+                                        class="btn btn-outline-primary btn-sm me-1"
+                                    >
+                                        {{ t('t-edit') }}
+                                    </Link>
                                     <BButton 
-                                        variant="warning" 
+                                        variant="outline-warning" 
                                         size="sm" 
                                         class="me-1"
                                         @click="updateStatus(item.id, item.status)"
@@ -184,7 +190,7 @@ const resetSearch = () => {
                                     </BButton>
                                     <BButton 
                                         v-if="item.wallet"
-                                        :variant="item.wallet.status === 'active' ? 'warning' : 'success'"
+                                        :variant="item.wallet.status === 'active' ? 'outline-warning' : 'outline-success'"
                                         size="sm" 
                                         class="me-1"
                                         @click="updateWalletStatus(item.id, item.wallet.status)"
@@ -192,14 +198,9 @@ const resetSearch = () => {
                                         <i :class="item.wallet.status === 'active' ? 'ri-lock-line' : 'ri-lock-unlock-line'"></i>
                                         {{ item.wallet.status === 'active' ? t('t-lock-wallet') : t('t-unlock-wallet') }}
                                     </BButton>
-                                    <Link 
-                                        :href="route('admin.users.edit', item.id)" 
-                                        class="btn btn-primary btn-sm me-1"
-                                    >
-                                        {{ t('t-edit') }}
-                                    </Link>
+                               
                                     <BButton 
-                                        variant="danger" 
+                                        variant="outline-danger" 
                                         size="sm"
                                         @click="deleteUser(item.id)"
                                     >

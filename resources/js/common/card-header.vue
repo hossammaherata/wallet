@@ -51,13 +51,13 @@ const reset = () => {
         />
         <!-- Search Button -->
         <b-button @click.prevent="submit" style="margin-left:15px;" variant="primary">
-          <i class="fas fa-search"></i> {{ t('t-search') }}
+          <i class="ri-search-line search-icon"></i> 
         </b-button>
         <!-- Reset Button -->
         <b-button 
           @click.prevent="reset" 
           style="margin-left:10px;" 
-          variant="secondary"
+          variant="outline-primary"
         >
           <i class="ri-refresh-line"></i> {{ t('t-reset') }}
         </b-button>

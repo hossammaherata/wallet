@@ -230,14 +230,14 @@ const submit = () => {
 
                             <template #actions>
                                 <BButton 
-                                    variant="success" 
+                                    variant="primary" 
                                     type="submit" 
                                     :class="{ 'opacity-25': form.processing }" 
                                     :disabled="form.processing"
                                 >
                                     {{ t('t-update-store') }}
                                 </BButton>
-                                <Link :href="route('admin.stores.index')" class="btn btn-secondary ms-2">
+                                <Link :href="route('admin.stores.index')" class="btn btn-outline-primary ms-2">
                                     {{ t('t-back-to-stores') }}
                                 </Link>
                             </template>
