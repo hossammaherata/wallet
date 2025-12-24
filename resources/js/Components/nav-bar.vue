@@ -13,7 +13,7 @@ import simplebar from "simplebar-vue";
 import i18n from "../i18n";
 
 import us_flag from "@assets/images/flags/us.svg";
-import ae from "@assets/images/flags/ae.svg";
+import sa from "@assets/images/flags/sa.svg";
 
 import img1 from "@assets/images/products/img-1.png";
 import img2 from "@assets/images/products/img-2.png";
@@ -33,7 +33,7 @@ export default {
         title: "English",
       },
       {
-        flag: ae,
+        flag: sa,
         language: "ar",
         title: "العربية",
       },
