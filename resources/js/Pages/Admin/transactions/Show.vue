@@ -126,7 +126,7 @@ const getTypeBadge = (type) => {
                         </BRow>
 
                         <div class="mt-3">
-                            <Link :href="route('admin.transactions.index')" class="btn btn-secondary">
+                            <Link :href="route('admin.transactions.index')" class="btn btn-outline-primary">
                                 {{ t('t-back-to-transactions') }}
                             </Link>
                         </div>
