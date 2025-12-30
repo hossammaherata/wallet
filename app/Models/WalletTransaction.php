@@ -19,7 +19,7 @@ use Illuminate\Support\Str;
  * @property int|null $from_wallet_id Sender wallet ID
  * @property int|null $to_wallet_id Receiver wallet ID
  * @property float $amount Transaction amount
- * @property string $type Transaction type: 'purchase', 'transfer', 'credit', 'debit', 'refund'
+ * @property string $type Transaction type: 'purchase', 'transfer', 'credit', 'debit', 'refund', 'withdrawal'
  * @property string $status Transaction status: 'pending', 'success', 'failed'
  * @property string $reference_id Unique UUID reference for tracking
  * @property array|null $meta Additional metadata (JSON)

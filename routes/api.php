@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ExternalBalanceController;
+use App\Http\Controllers\Api\BankAccountController;
+use App\Http\Controllers\Api\WithdrawalRequestController;
 
 /*
 ||--------------------------------------------------------------------------
@@ -58,6 +60,21 @@ Route::prefix('v1')->group(function () {
             Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
             Route::post('/{id}/read', [NotificationController::class, 'markAsRead']);
             Route::post('/read-all', [NotificationController::class, 'markAllAsRead']);
+        });
+        
+        // Bank Account routes
+        Route::prefix('bank-accounts')->group(function () {
+            Route::get('/', [BankAccountController::class, 'index']);
+            Route::post('/', [BankAccountController::class, 'store']);
+            Route::put('/{id}', [BankAccountController::class, 'update']);
+            Route::delete('/{id}', [BankAccountController::class, 'destroy']);
+        });
+        
+        // Withdrawal Request routes
+        Route::prefix('withdrawal-requests')->group(function () {
+            Route::get('/', [WithdrawalRequestController::class, 'index']);
+            Route::post('/', [WithdrawalRequestController::class, 'store']);
+            Route::post('/{id}/cancel', [WithdrawalRequestController::class, 'cancel']);
         });
     });
 });

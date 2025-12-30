@@ -116,7 +116,7 @@ class UserController extends BaseController
      */
     public function show(string $id)
     {
-        $user = User::with('wallet')->findOrFail($id);
+        $user = User::with(['wallet', 'bankAccounts'])->findOrFail($id);
         
         // Get transactions for this user's wallet
         $transactions = collect();
@@ -150,9 +150,13 @@ class UserController extends BaseController
             });
         }
         
+        // Get bank accounts for this user
+        $bankAccounts = $user->bankAccounts()->where('status', 'active')->get();
+        
         return Inertia::render('Admin/users/Show', [
             'user' => $user,
             'transactions' => $transactions,
+            'bankAccounts' => $bankAccounts,
         ]);
     }
 

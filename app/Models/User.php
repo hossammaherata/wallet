@@ -186,4 +186,24 @@ class User extends Authenticatable implements Searchable
     {
         return $this->notifications()->unread()->count();
     }
+
+    /**
+     * Get all bank accounts for the user.
+     * 
+     * @return HasMany
+     */
+    public function bankAccounts(): HasMany
+    {
+        return $this->hasMany(\App\Models\BankAccount::class);
+    }
+
+    /**
+     * Get all withdrawal requests for the user.
+     * 
+     * @return HasMany
+     */
+    public function withdrawalRequests(): HasMany
+    {
+        return $this->hasMany(\App\Models\WithdrawalRequest::class);
+    }
 }

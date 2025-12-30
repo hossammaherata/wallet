@@ -67,22 +67,22 @@ const formatAmount = (amount) => {
 
 const getStatusBadge = (status) => {
     const badges = {
-        'success': 'outline-success',
-        'pending': 'outline-warning',
-        'failed': 'outline-danger'
+        'success': 'success',
+        'pending': 'warning',
+        'failed': 'danger'
     };
     return badges[status] || 'secondary';
 };
 
 const getTypeBadge = (type) => {
     const badges = {
-        'purchase': 'outline-primary',
-        'transfer': 'outline-info',
-        'credit': 'outline-success',
+        'purchase': 'primary',
+        'transfer': 'info',
+        'credit': 'success',
         // 'debit': 'danger',
-        'refund': 'outline-warning'
+        'refund': 'warning'
     };
-    return badges[type] || 'outline-secondary';
+    return badges[type] || 'secondary';
 };
 </script>
 
@@ -205,7 +205,7 @@ const getTypeBadge = (type) => {
                                         {{ item.from_wallet.user.name }}<br>
                                         <small class="text-muted">{{ item.from_wallet.user.phone }}</small>
                                     </span>
-                                    <BBadge v-else variant="outline-secondary">{{ t('t-system') }}</BBadge>
+                                    <BBadge v-else variant="secondary">{{ t('t-system') }}</BBadge>
                                 </template>
 
                                 <template #cell(to_user)="{ item }">

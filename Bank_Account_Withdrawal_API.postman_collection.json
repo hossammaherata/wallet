@@ -1,0 +1,331 @@
+{
+	"info": {
+		"_postman_id": "bank-account-withdrawal-api-2025",
+		"name": "Bank Account & Withdrawal Request API",
+		"description": "API collection for Bank Account Management and Withdrawal Requests\n\n## Authentication\nAll endpoints require Bearer Token authentication.\nToken is obtained from `/api/v1/login` or `/api/v1/register` endpoints.\n\n## Base URL\nSet the `base_url` variable in the collection to your API base URL (e.g., `http://localhost:8000/api` or `https://yourdomain.com/api`)\n\n## User Types\n- **User**: Regular user can manage bank accounts and create withdrawal requests\n- **Store**: Store accounts cannot use these endpoints\n- **Admin**: Admin accounts manage withdrawal requests via dashboard\n\n## Response Format\nAll responses follow this format:\n```json\n{\n  \"success\": true/false,\n  \"message\": \"Message in Arabic\",\n  \"data\": { ... }\n}\n```\n\n## Error Messages\nAll error messages are in Arabic.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Bank Accounts",
+			"item": [
+				{
+					"name": "Get All Bank Accounts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/bank-accounts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"bank-accounts"
+							]
+						},
+						"description": "Get all active bank accounts for the authenticated user.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم جلب الحسابات البنكية بنجاح\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"bank_name\": \"البنك الأهلي السعودي\",\n      \"account_number\": \"1234567890\",\n      \"account_holder_name\": \"أحمد محمد\",\n      \"iban\": \"SA1234567890123456789012\",\n      \"branch_name\": \"فرع الرياض\",\n      \"status\": \"active\",\n      \"created_at\": \"2025-12-30 10:00:00\",\n      \"updated_at\": \"2025-12-30 10:00:00\"\n    }\n  ]\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bank Account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bank_name\": \"البنك الأهلي السعودي\",\n    \"account_number\": \"1234567890\",\n    \"account_holder_name\": \"أحمد محمد\",\n    \"iban\": \"SA1234567890123456789012\",\n    \"branch_name\": \"فرع الرياض\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/bank-accounts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"bank-accounts"
+							]
+						},
+						"description": "Create a new bank account for the authenticated user.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Request Body\n- `bank_name` (required): Bank name\n- `account_number` (required): Account number\n- `account_holder_name` (required): Account holder name\n- `iban` (optional): IBAN number\n- `branch_name` (optional): Branch name\n\n### Success Response (201)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم إضافة الحساب البنكي بنجاح\",\n  \"data\": {\n    \"id\": 1,\n    \"bank_name\": \"البنك الأهلي السعودي\",\n    \"account_number\": \"1234567890\",\n    \"account_holder_name\": \"أحمد محمد\",\n    \"iban\": \"SA1234567890123456789012\",\n    \"branch_name\": \"فرع الرياض\",\n    \"status\": \"active\",\n    \"created_at\": \"2025-12-30 10:00:00\",\n    \"updated_at\": \"2025-12-30 10:00:00\"\n  }\n}\n```\n\n### Error Response (422)\n```json\n{\n  \"success\": false,\n  \"message\": \"البيانات المدخلة غير صحيحة\",\n  \"errors\": {\n    \"bank_name\": [\"اسم البنك مطلوب\"],\n    \"account_number\": [\"رقم الحساب مطلوب\"],\n    \"account_holder_name\": [\"اسم صاحب الحساب مطلوب\"]\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Bank Account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bank_name\": \"البنك الأهلي السعودي\",\n    \"account_number\": \"1234567890\",\n    \"account_holder_name\": \"أحمد محمد\",\n    \"iban\": \"SA1234567890123456789012\",\n    \"branch_name\": \"فرع جدة\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/bank-accounts/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"bank-accounts",
+								"1"
+							]
+						},
+						"description": "Update an existing bank account.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### URL Parameters\n- `id` (required): Bank account ID\n\n### Request Body\nAll fields are optional (only include fields you want to update):\n- `bank_name` (optional): Bank name\n- `account_number` (optional): Account number\n- `account_holder_name` (optional): Account holder name\n- `iban` (optional): IBAN number\n- `branch_name` (optional): Branch name\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم تحديث الحساب البنكي بنجاح\",\n  \"data\": {\n    \"id\": 1,\n    \"bank_name\": \"البنك الأهلي السعودي\",\n    \"account_number\": \"1234567890\",\n    \"account_holder_name\": \"أحمد محمد\",\n    \"iban\": \"SA1234567890123456789012\",\n    \"branch_name\": \"فرع جدة\",\n    \"status\": \"active\",\n    \"created_at\": \"2025-12-30 10:00:00\",\n    \"updated_at\": \"2025-12-30 11:00:00\"\n  }\n}\n```\n\n### Error Response (404)\n```json\n{\n  \"success\": false,\n  \"message\": \"الحساب البنكي غير موجود\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Bank Account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/bank-accounts/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"bank-accounts",
+								"1"
+							]
+						},
+						"description": "Delete (soft delete) a bank account.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### URL Parameters\n- `id` (required): Bank account ID\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم حذف الحساب البنكي بنجاح\",\n  \"data\": null\n}\n```\n\n### Error Response (404)\n```json\n{\n  \"success\": false,\n  \"message\": \"الحساب البنكي غير موجود\"\n}\n```\n\n### Error Response (400)\n```json\n{\n  \"success\": false,\n  \"message\": \"لا يمكن حذف الحساب البنكي لأنه يحتوي على طلبات سحب قيد الانتظار\"\n}\n```\n\n**Note**: Bank account cannot be deleted if it has pending withdrawal requests."
+					},
+					"response": []
+				}
+			],
+			"description": "Bank Account Management APIs\n\nUsers can add, update, and delete their bank accounts. These accounts are used when creating withdrawal requests."
+		},
+		{
+			"name": "Withdrawal Requests",
+			"item": [
+				{
+					"name": "Get All Withdrawal Requests",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/withdrawal-requests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"withdrawal-requests"
+							]
+						},
+						"description": "Get all withdrawal requests for the authenticated user with pagination.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم جلب طلبات السحب بنجاح\",\n  \"data\": {\n    \"withdrawal_requests\": [\n      {\n        \"id\": 1,\n        \"amount\": 500.00,\n        \"status\": \"pending\",\n        \"admin_notes\": null,\n        \"approved_at\": null,\n        \"rejected_at\": null,\n        \"created_at\": \"2025-12-30 10:00:00\",\n        \"updated_at\": \"2025-12-30 10:00:00\",\n        \"bank_account\": {\n          \"id\": 1,\n          \"bank_name\": \"البنك الأهلي السعودي\",\n          \"account_number\": \"1234567890\",\n          \"account_holder_name\": \"أحمد محمد\",\n          \"iban\": \"SA1234567890123456789012\",\n          \"branch_name\": \"فرع الرياض\"\n        }\n      }\n    ],\n    \"pagination\": {\n      \"current_page\": 1,\n      \"last_page\": 1,\n      \"per_page\": 15,\n      \"total\": 1\n    }\n  }\n}\n```\n\n### Query Parameters\n- `per_page` (optional): Number of items per page (default: 15)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Withdrawal Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bank_account_id\": 1,\n    \"amount\": 500.00\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/withdrawal-requests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"withdrawal-requests"
+							]
+						},
+						"description": "Create a new withdrawal request.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### Request Body\n- `bank_account_id` (required): ID of the bank account to withdraw to\n- `amount` (required): Amount to withdraw (must be <= wallet balance)\n\n### Validation Rules\n- Amount must be greater than 0.01\n- Amount must be less than or equal to wallet balance\n- Bank account must belong to the authenticated user\n- Bank account must be active\n- User must have an active wallet\n- Wallet must not be locked\n\n### Success Response (201)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم إنشاء طلب السحب بنجاح. في انتظار الموافقة\",\n  \"data\": {\n    \"id\": 1,\n    \"amount\": 500.00,\n    \"status\": \"pending\",\n    \"admin_notes\": null,\n    \"approved_at\": null,\n    \"rejected_at\": null,\n    \"created_at\": \"2025-12-30 10:00:00\",\n    \"updated_at\": \"2025-12-30 10:00:00\",\n    \"bank_account\": {\n      \"id\": 1,\n      \"bank_name\": \"البنك الأهلي السعودي\",\n      \"account_number\": \"1234567890\",\n      \"account_holder_name\": \"أحمد محمد\",\n      \"iban\": \"SA1234567890123456789012\",\n      \"branch_name\": \"فرع الرياض\"\n    }\n  }\n}\n```\n\n### Error Response (400)\n```json\n{\n  \"success\": false,\n  \"message\": \"رصيدك غير كافٍ. الرصيد الحالي: 100.00 نقطة\"\n}\n```\n\n### Error Response (404)\n```json\n{\n  \"success\": false,\n  \"message\": \"الحساب البنكي المحدد غير موجود أو غير نشط\"\n}\n```\n\n### Error Response (422)\n```json\n{\n  \"success\": false,\n  \"message\": \"البيانات المدخلة غير صحيحة\",\n  \"errors\": {\n    \"bank_account_id\": [\"يرجى اختيار الحساب البنكي\"],\n    \"amount\": [\"المبلغ مطلوب\", \"المبلغ يجب أن يكون رقماً\", \"المبلغ يجب أن يكون أكبر من صفر\"]\n  }\n}\n```\n\n**Note**: \n- A notification will be sent to the user when the request is created\n- The amount will NOT be deducted from wallet until admin approves the request\n- User can cancel pending requests"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Withdrawal Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/withdrawal-requests/1/cancel",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"withdrawal-requests",
+								"1",
+								"cancel"
+							]
+						},
+						"description": "Cancel a pending withdrawal request.\n\n### Authentication\nRequires Bearer Token in Authorization header.\n\n### URL Parameters\n- `id` (required): Withdrawal request ID\n\n### Success Response (200)\n```json\n{\n  \"success\": true,\n  \"message\": \"تم إلغاء طلب السحب بنجاح\",\n  \"data\": {\n    \"id\": 1,\n    \"amount\": 500.00,\n    \"status\": \"cancelled\",\n    \"admin_notes\": null,\n    \"approved_at\": null,\n    \"rejected_at\": null,\n    \"created_at\": \"2025-12-30 10:00:00\",\n    \"updated_at\": \"2025-12-30 11:00:00\",\n    \"bank_account\": {\n      \"id\": 1,\n      \"bank_name\": \"البنك الأهلي السعودي\",\n      \"account_number\": \"1234567890\",\n      \"account_holder_name\": \"أحمد محمد\",\n      \"iban\": \"SA1234567890123456789012\",\n      \"branch_name\": \"فرع الرياض\"\n    }\n  }\n}\n```\n\n### Error Response (404)\n```json\n{\n  \"success\": false,\n  \"message\": \"طلب السحب غير موجود\"\n}\n```\n\n### Error Response (400)\n```json\n{\n  \"success\": false,\n  \"message\": \"لا يمكن إلغاء طلب السحب إلا إذا كان في حالة انتظار\"\n}\n```\n\n**Note**: \n- Only pending requests can be cancelled\n- A notification will be sent to the user when the request is cancelled"
+					},
+					"response": []
+				}
+			],
+			"description": "Withdrawal Request APIs\n\nUsers can create withdrawal requests to withdraw points from their wallet to their bank accounts. Requests require admin approval before the amount is deducted from the wallet."
+		}
+	]
+}
+

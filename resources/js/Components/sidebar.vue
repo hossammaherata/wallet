@@ -182,6 +182,12 @@ export default {
                 </Link>
               </li>
               
+              <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'admin'">
+                <Link :href="route('admin.withdrawal-requests.index')" class="nav-link custom-abc" data-key="t-withdrawal-requests">
+                {{ $t("t-withdrawal-requests") || 'طلبات السحب' }}
+                </Link>
+              </li>
+              
               <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'store'">
                 <Link :href="route('store.dashboard')" class="nav-link custom-abc" data-key="t-store-dashboard">
                 {{ $t("t-store-dashboard") }}

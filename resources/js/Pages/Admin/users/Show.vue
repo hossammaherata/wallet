@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const { user, transactions } = usePage().props;
+const { user, transactions, bankAccounts } = usePage().props;
 
 const formatDate = (date) => {
     if (!date) return '-';
@@ -209,6 +209,45 @@ const updateWalletStatus = (event) => {
                                 </div>
                             </BCol>
                         </BRow>
+                    </BCardBody>
+                </BCard>
+            </BCol>
+        </BRow>
+
+        <!-- Bank Accounts -->
+        <BRow class="mt-4" v-if="bankAccounts && bankAccounts.length > 0">
+            <BCol lg="12">
+                <BCard no-body>
+                    <CardHeader :title="t('t-bank-accounts') || 'Bank Accounts'" />
+                    <BCardBody>
+                        <div class="table-responsive">
+                            <BTable 
+                                striped 
+                                hover 
+                                :items="bankAccounts" 
+                                :fields="[
+                                    { key: 'bank_name', label: t('t-bank-name') || 'Bank Name' },
+                                    { key: 'account_holder_name', label: t('t-account-holder-name') || 'Account Holder' },
+                                    { key: 'account_number', label: t('t-account-number') || 'Account Number' },
+                                    { key: 'iban', label: 'IBAN' },
+                                    { key: 'branch_name', label: t('t-branch-name') || 'Branch' },
+                                    { key: 'created_at', label: t('t-created-at') }
+                                ]"
+                                class="table-nowrap"
+                            >
+                                <template #cell(iban)="{ item }">
+                                    <span v-if="item.iban">{{ item.iban }}</span>
+                                    <span v-else class="text-muted">-</span>
+                                </template>
+                                <template #cell(branch_name)="{ item }">
+                                    <span v-if="item.branch_name">{{ item.branch_name }}</span>
+                                    <span v-else class="text-muted">-</span>
+                                </template>
+                                <template #cell(created_at)="{ item }">
+                                    {{ formatDate(item.created_at) }}
+                                </template>
+                            </BTable>
+                        </div>
                     </BCardBody>
                 </BCard>
             </BCol>

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\WithdrawalRequestController;
 
 
 
@@ -23,6 +24,12 @@ Route::middleware('admin')->group(function () {
     // Transaction routes
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{id}', [TransactionController::class, 'show'])->name('transactions.show');
+    
+    // Withdrawal Request routes
+    Route::get('/withdrawal-requests', [WithdrawalRequestController::class, 'index'])->name('withdrawal-requests.index');
+    Route::get('/withdrawal-requests/{id}', [WithdrawalRequestController::class, 'show'])->name('withdrawal-requests.show');
+    Route::post('/withdrawal-requests/{id}/approve', [WithdrawalRequestController::class, 'approve'])->name('withdrawal-requests.approve');
+    Route::post('/withdrawal-requests/{id}/reject', [WithdrawalRequestController::class, 'reject'])->name('withdrawal-requests.reject');
 });
 
 Route::get('/cities', [CityController::class, 'index'])->name('cities.index');
