@@ -1,0 +1,92 @@
+{
+  "event_id": 104,
+  "event_type": "nomination",
+  "event_meta": {
+    "title": "Race 5 - Week 12",
+    "title_ar": "السباق 5 - الأسبوع 12",
+    "date": "2025-01-15T18:00:00Z"
+  },
+  "winners": [
+    {
+      "position": 1,
+      "category": "attendance_fan",
+      "user_id": 167,
+      "email": null,
+      "phone": "+966508888888",
+      "points": 50
+    },
+    {
+      "position": 2,
+      "category": "attendance_fan",
+      "user_id": 155,
+      "email": null,
+      "phone": "+966509108232",
+      "points": 45
+    },
+    {
+      "position": 3,
+      "category": "attendance_fan",
+      "user_id": 166,
+      "email": "edge_test_1766675361@test.com",
+      "phone": "+966509999999",
+      "points": 40
+    },
+    {
+      "position": 4,
+      "category": "attendance_fan",
+      "user_id": 97,
+      "email": "msayed95@icloud.com",
+      "phone": "+966512345677",
+      "points": 35
+    },
+    {
+      "position": 5,
+      "category": "attendance_fan",
+      "user_id": 148,
+      "email": null,
+      "phone": "+966512345678",
+      "points": 30
+    },
+    {
+      "position": 1,
+      "category": "online_fan",
+      "user_id": 171,
+      "email": null,
+      "phone": "+966512345687",
+      "points": 48
+    },
+    {
+      "position": 2,
+      "category": "online_fan",
+      "user_id": 180,
+      "email": null,
+      "phone": "+966514785245",
+      "points": 42
+    },
+    {
+      "position": 3,
+      "category": "online_fan",
+      "user_id": 154,
+      "email": null,
+      "phone": "+966540340334",
+      "points": 38
+    },
+    {
+      "position": 4,
+      "category": "online_fan",
+      "user_id": 184,
+      "email": null,
+      "phone": "+966540890663",
+      "points": 33
+    },
+    {
+      "position": 5,
+      "category": "online_fan",
+      "user_id": 175,
+      "email": null,
+      "phone": "+966555656586",
+      "points": 28
+    }
+  ]
+}
+

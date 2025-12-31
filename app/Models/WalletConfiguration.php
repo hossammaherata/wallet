@@ -29,11 +29,15 @@ class WalletConfiguration extends Model
     protected $fillable = [
         'transfer_fee_percentage',
         'withdrawal_fee_percentage',
+        'ugc_prizes',
+        'nomination_prizes',
     ];
 
     protected $casts = [
         'transfer_fee_percentage' => 'decimal:2',
         'withdrawal_fee_percentage' => 'decimal:2',
+        'ugc_prizes' => 'array',
+        'nomination_prizes' => 'array',
     ];
 
     /**
@@ -47,10 +51,15 @@ class WalletConfiguration extends Model
         $config = static::latest()->first();
         
         if (!$config) {
-            // Create default configuration with zero fees
+            // Create default configuration with zero fees and default prizes
             $config = static::create([
                 'transfer_fee_percentage' => 0,
                 'withdrawal_fee_percentage' => 0,
+                'ugc_prizes' => [0, 0, 0], // Default: 0 points for positions 1, 2, 3
+                'nomination_prizes' => [
+                    'attendance_fan' => [0, 0, 0, 0, 0], // Default: 0 points for positions 1-5
+                    'online_fan' => [0, 0, 0, 0, 0], // Default: 0 points for positions 1-5
+                ],
             ]);
         }
         
@@ -109,5 +118,51 @@ class WalletConfiguration extends Model
     {
         $fee = $this->calculateWithdrawalFee($amount);
         return $amount - $fee;
+    }
+
+    /**
+     * Get UGC prize amount for a specific position (1-3).
+     * 
+     * @param int $position Position (1, 2, or 3)
+     * @return float Prize amount
+     */
+    public function getUgcPrize(int $position): float
+    {
+        $prizes = $this->ugc_prizes ?? [0, 0, 0];
+        $index = $position - 1; // Convert to 0-based index
+        
+        if ($index < 0 || $index >= count($prizes)) {
+            return 0;
+        }
+        
+        return (float) ($prizes[$index] ?? 0);
+    }
+
+    /**
+     * Get Nomination prize amount for a specific position and category.
+     * 
+     * @param int $position Position (1-5)
+     * @param string $category 'attendance_fan' or 'online_fan'
+     * @return float Prize amount
+     */
+    public function getNominationPrize(int $position, string $category): float
+    {
+        $nominationPrizes = $this->nomination_prizes ?? [
+            'attendance_fan' => [0, 0, 0, 0, 0],
+            'online_fan' => [0, 0, 0, 0, 0],
+        ];
+        
+        if (!isset($nominationPrizes[$category])) {
+            return 0;
+        }
+        
+        $prizes = $nominationPrizes[$category];
+        $index = $position - 1; // Convert to 0-based index
+        
+        if ($index < 0 || $index >= count($prizes)) {
+            return 0;
+        }
+        
+        return (float) ($prizes[$index] ?? 0);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\WithdrawalRequestController;
 use App\Http\Controllers\Admin\WalletConfigurationController;
+use App\Http\Controllers\Admin\PrizeDistributionController;
 use App\Http\Controllers\Admin\DashboardController;
 
 
@@ -38,6 +39,10 @@ Route::middleware('admin')->group(function () {
     // Wallet Configuration routes
     Route::get('/wallet-configuration', [WalletConfigurationController::class, 'index'])->name('wallet-configuration.index');
     Route::put('/wallet-configuration', [WalletConfigurationController::class, 'update'])->name('wallet-configuration.update');
+    
+    // Prize Distribution routes
+    Route::get('/prize-distributions', [PrizeDistributionController::class, 'index'])->name('prize-distributions.index');
+    Route::get('/prize-distributions/{id}', [PrizeDistributionController::class, 'show'])->name('prize-distributions.show');
 });
 
 Route::get('/cities', [CityController::class, 'index'])->name('cities.index');

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ExternalBalanceController;
+use App\Http\Controllers\Api\PrizeDistributionController;
 use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\WithdrawalRequestController;
 use App\Http\Controllers\Api\WalletConfigurationController;
@@ -96,6 +97,7 @@ Route::prefix('v1')->group(function () {
 
 Route::prefix('external')->middleware(['api.auth', 'throttle:60,1'])->group(function () {
     Route::post('/balances/update', [ExternalBalanceController::class, 'updateBalances']);
+    Route::post('/prizes/distribute', [PrizeDistributionController::class, 'distributePrizes']);
 });
 
 /*

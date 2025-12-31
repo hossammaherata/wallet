@@ -1,0 +1,37 @@
+{
+  "event_id": 45,
+  "event_type": "ugc",
+  "event_subtype": "1_W240",
+  "event_meta": {
+    "title": "Storytelling - Week 52",
+    "title_ar": "القصة - الأسبوع 52",
+    "date": "2025-01-12T23:59:59Z"
+  },
+  "winners": [
+    {
+      "position": 1,
+      "category": "ugc_creator",
+      "user_id": 157,
+      "email": "yasmeen.abuijkhaidem@qissatech.com",
+      "phone": "+962772447189",
+      "points": 150
+    },
+    {
+      "position": 2,
+      "category": "ugc_creator",
+      "user_id": 144,
+      "email": null,
+      "phone": "+966500450882",
+      "points": 120
+    },
+    {
+      "position": 3,
+      "category": "ugc_creator",
+      "user_id": 165,
+      "email": "addphone_test_1766675340@test.com",
+      "phone": "+966501234567",
+      "points": 100
+    }
+  ]
+}
+

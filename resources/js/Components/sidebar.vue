@@ -200,6 +200,12 @@ export default {
                 </Link>
               </li>
               
+              <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'admin'">
+                <Link :href="route('admin.prize-distributions.index')" class="nav-link custom-abc">
+                {{ $t('t-prize-distributions') }}
+                </Link>
+              </li>
+              
               <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'store'">
                 <Link :href="route('store.dashboard')" class="nav-link custom-abc" data-key="t-store-dashboard">
                 {{ $t("t-store-dashboard") }}
