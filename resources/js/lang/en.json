@@ -445,5 +445,14 @@
     "t-first-transfer-note": "Note: First transfer for each user is free (no fee deducted)",
     "t-save-settings": "Save Settings",
     "t-settings-updated": "Settings updated successfully",
-    "t-example": "Example"
+    "t-example": "Example",
+    "t-total-fees-collected": "Total Fees Collected",
+    "t-transactions-by-type": "Transactions by Type",
+    "t-transactions-by-status": "Transactions by Status",
+    "t-transactions-over-time": "Transactions Over Time",
+    "t-new-users": "New Users",
+    "t-withdrawals-by-status": "Withdrawals by Status",
+    "t-recent-transactions": "Recent Transactions",
+    "t-recent-withdrawals": "Recent Withdrawals",
+    "t-no-data": "No Data"
 }

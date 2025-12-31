@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\VelzonRoutesController;
 use App\Http\Controllers\Store\StoreDashboardController;
@@ -21,7 +22,7 @@ Route::get('/register', function () {
     abort(404);
 });
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
-    Route::get('/', [UserController::class, 'index'])->name('home');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Store dashboard routes
     Route::middleware('store')->prefix('store')->name('store.')->group(function () {

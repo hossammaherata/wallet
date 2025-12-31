@@ -438,5 +438,14 @@
     "t-first-transfer-note": "ملاحظة: أول تحويل لكل مستخدم مجاني (لا يتم خصم الرسوم)",
     "t-save-settings": "حفظ الإعدادات",
     "t-settings-updated": "تم تحديث الإعدادات بنجاح",
-    "t-example": "مثال"
+    "t-example": "مثال",
+    "t-total-fees-collected": "إجمالي الرسوم المحصلة",
+    "t-transactions-by-type": "المعاملات حسب النوع",
+    "t-transactions-by-status": "المعاملات حسب الحالة",
+    "t-transactions-over-time": "المعاملات عبر الزمن",
+    "t-new-users": "المستخدمين الجدد",
+    "t-withdrawals-by-status": "طلبات السحب حسب الحالة",
+    "t-recent-transactions": "آخر المعاملات",
+    "t-recent-withdrawals": "آخر طلبات السحب",
+    "t-no-data": "لا توجد بيانات"
 }

@@ -6,15 +6,18 @@ use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\WithdrawalRequestController;
 use App\Http\Controllers\Admin\WalletConfigurationController;
+use App\Http\Controllers\Admin\DashboardController;
 
 
 
 
 Route::middleware('admin')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
     Route::resource('/users', UserController::class);
     Route::post('/users/{id}/status', [UserController::class, 'updateStatus'])->name('users.updateStatus');
     Route::post('/users/{id}/wallet-status', [UserController::class, 'updateWalletStatus'])->name('users.updateWalletStatus');
-    Route::get('/', [UserController::class, 'index'])->name('home');
     
     // Store routes
     Route::resource('/stores', StoreController::class);

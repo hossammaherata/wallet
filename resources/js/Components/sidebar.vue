@@ -165,6 +165,12 @@ export default {
               </li> -->
               
               <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'admin'">
+                <Link :href="route('admin.dashboard')" class="nav-link custom-abc">
+                {{ $t("t-dashboards") }}
+                </Link>
+              </li>
+              
+              <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'admin'">
                 <Link :href="route('admin.users.index')" class="nav-link custom-abc" data-key="t-users">
                 {{ $t("t-users-management") }}
                 </Link>
