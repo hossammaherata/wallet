@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\WithdrawalRequestController;
 use App\Http\Controllers\Admin\WalletConfigurationController;
 use App\Http\Controllers\Admin\PrizeDistributionController;
+use App\Http\Controllers\Admin\AdminPrizeController;
 use App\Http\Controllers\Admin\DashboardController;
 
 
@@ -43,6 +44,10 @@ Route::middleware('admin')->group(function () {
     // Prize Distribution routes
     Route::get('/prize-distributions', [PrizeDistributionController::class, 'index'])->name('prize-distributions.index');
     Route::get('/prize-distributions/{id}', [PrizeDistributionController::class, 'show'])->name('prize-distributions.show');
+    
+    // Prizes routes (new manual prizes system)
+    Route::resource('/prizes', AdminPrizeController::class)->names('prizes');
+    Route::get('/prizes-statistics', [AdminPrizeController::class, 'statistics'])->name('prizes.statistics');
 });
 
 Route::get('/cities', [CityController::class, 'index'])->name('cities.index');

@@ -31,6 +31,9 @@ class DashboardController extends BaseController
         if ($authUser->isStore()) {
             return redirect()->route('store.dashboard');
         }
+        if ($authUser->isPrizeManager()) {
+            return redirect()->route('prize-manager.dashboard');
+        }
 
         // Get date range (default: last 30 days)
         $days = (int) $request->get('days', 30);

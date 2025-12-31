@@ -11,10 +11,10 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const { users, keyword } = usePage().props;
+const { users, keyword, type } = usePage().props;
 
-// Form to handle page change and preserve keyword
-const form = useForm({ page: 1, keyword: keyword || '' });
+// Form to handle page change and preserve keyword and type
+const form = useForm({ page: 1, keyword: keyword || '', type: type || 'user' });
 
 // Function to handle page change
 const getResourese = (event, page) => {
@@ -119,6 +119,16 @@ const resetSearch = () => {
                         </template>
                     </CardHeader>
                     <BCardBody>
+                        <!-- Type Filter -->
+                        <div class="mb-3 d-flex gap-2 align-items-center">
+                            <label class="form-label mb-0">{{ t('t-filter-by-type') }}:</label>
+                            <select v-model="form.type" @change="getResourese" class="form-select" style="width: auto;">
+                                <option value="user">{{ t('t-regular-users') }}</option>
+                                <option value="store">{{ t('t-stores') }}</option>
+                                <option value="prize_manager">{{ t('t-prize-managers') }}</option>
+                            </select>
+                        </div>
+
                         <!-- Total count display -->
                         <div class="mb-3">
                             <span class="text-muted">{{ t('t-total-users') }}: <strong>{{ users.total }}</strong></span>
@@ -132,6 +142,7 @@ const resetSearch = () => {
                                 :fields="[
                                     { key: 'row_number', label: '#', sortable: false },
                                     { key: 'name', label: t('t-name'), sortable: true },
+                                    { key: 'type', label: t('t-type'), sortable: true },
                                     { key: 'phone', label: t('t-phone'), sortable: true },
                                     { key: 'email', label: t('t-email'), sortable: true },
                                     { key: 'balance', label: t('t-balance'), sortable: true },
@@ -144,6 +155,12 @@ const resetSearch = () => {
                             >
                                 <template #cell(row_number)="{ index }">
                                     {{ (users.current_page - 1) * users.per_page + index + 1 }}
+                                </template>
+
+                                <template #cell(type)="{ item }">
+                                    <BBadge :variant="item.type === 'store' ? 'warning' : item.type === 'prize_manager' ? 'info' : 'primary'">
+                                        {{ item.type === 'store' ? t('t-store') : item.type === 'prize_manager' ? t('t-prize-manager') : t('t-regular-user') }}
+                                    </BBadge>
                                 </template>
 
                                 <template #cell(balance)="{ item }">

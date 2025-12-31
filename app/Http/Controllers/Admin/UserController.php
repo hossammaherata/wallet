@@ -46,8 +46,8 @@ class UserController extends BaseController
     /**
      * Display a listing of users.
      * 
-     * Supports keyword search and pagination.
-     * Only shows regular users (type='user'), not stores or admins.
+     * Supports keyword search, type filter, and pagination.
+     * Can show regular users, stores, admins, or prize managers.
      * 
      * @param Request $request
      * @return \Inertia\Response
@@ -60,15 +60,24 @@ class UserController extends BaseController
            return redirect()->route('store.dashboard');
         }
         $keyword = $request->get('keyword', null);
-        $users = User::where('type', 'user')
-            ->ofKeyword($keyword)
-            ->with('wallet')
-            ->orderBy('id', 'desc')
-            ->paginate(10);
+        $type = $request->get('type', 'user'); // Default to 'user' for backward compatibility
+        
+        $query = User::ofKeyword($keyword)
+            ->with('wallet');
+        
+        // Filter by type if specified
+        if ($type && in_array($type, ['user', 'store', 'admin', 'prize_manager'])) {
+            $query->where('type', $type);
+        }
+        
+        $users = $query->orderBy('id', 'desc')
+            ->paginate(10)
+            ->withQueryString();
         
         return Inertia::render('Admin/users/Index', [
             'users' => $users,
             'keyword' => $keyword,
+            'type' => $type,
         ]);
     }
 
@@ -85,12 +94,20 @@ class UserController extends BaseController
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validationRules = [
             'name' => 'required|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:users',
             'phone' => 'required_without:email|string|unique:users',
             'status' => 'required|in:active,suspended',
-        ]);
+            'type' => 'required|in:user,store,admin,prize_manager',
+        ];
+
+        // Password is required for store, admin, and prize_manager, but not for regular users
+        if (in_array($request->type, ['store', 'admin', 'prize_manager'])) {
+            $validationRules['password'] = 'required|string|min:8|confirmed';
+        }
+
+        $request->validate($validationRules);
 
         try {
             $userData = [
@@ -98,12 +115,19 @@ class UserController extends BaseController
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'status' => $request->status,
+                'type' => $request->type,
+                'password' => Hash::make($request->password),
             ];
 
-            $this->userService->register($userData);
+            // For prize_manager and admin, use direct creation instead of UserService
+            if (in_array($request->type, ['prize_manager', 'admin'])) {
+                User::create($userData);
+            } else {
+                $this->userService->register($userData);
+            }
 
-            return redirect()->route('admin.users.index')
-                ->with('success', 'User created successfully');
+            return redirect()->route('admin.users.index', ['type' => $request->type])
+                ->with('success', 'تم إنشاء المستخدم بنجاح');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -179,16 +203,17 @@ class UserController extends BaseController
     {
         $user = User::findOrFail($id);
         
-        // Only validate password for stores, not for regular users
+        // Validation rules
         $validationRules = [
             'name' => 'required|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:users,email,' . $id,
             'phone' => 'nullable|string|unique:users,phone,' . $id,
             'status' => 'required|in:active,suspended',
+            'type' => 'required|in:user,store,admin,prize_manager',
         ];
         
-        // Only add password validation for stores
-        if ($user->isStore()) {
+        // Add password validation for stores, admins, and prize managers
+        if (in_array($user->type, ['store', 'admin', 'prize_manager'])) {
             $validationRules['password'] = 'nullable|string|min:8|confirmed';
         }
         
@@ -200,10 +225,11 @@ class UserController extends BaseController
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'status' => $request->status,
+                'type' => $request->type,
             ];
 
-            // Only update password for stores
-            if ($user->isStore() && $request->filled('password')) {
+            // Update password if provided
+            if ($request->filled('password')) {
                 $updateData['password'] = Hash::make($request->password);
             }
 
@@ -214,8 +240,8 @@ class UserController extends BaseController
                 $user->tokens()->delete();
             }
 
-            return redirect()->route('admin.users.index')
-                ->with('success', 'User updated successfully');
+            return redirect()->route('admin.users.index', ['type' => $request->type])
+                ->with('success', 'تم تحديث المستخدم بنجاح');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()

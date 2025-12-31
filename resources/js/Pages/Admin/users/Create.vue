@@ -19,6 +19,9 @@ const form = useForm({
     email: '',
     phone: '',
     status: 'active',
+    type: 'user',
+    password: '',
+    password_confirmation: '',
 });
 
 const Store = () => {
@@ -85,6 +88,45 @@ const Store = () => {
                                     :class="{ 'is-invalid': form.errors.phone }"
                                 />
                                 <InputError :message="form.errors.phone" class="mt-2" />
+                            </div>
+
+                            <div class="mb-3">
+                                <InputLabel for="type" :value="t('t-user-type-label')" />
+                                <select
+                                    id="type"
+                                    v-model="form.type"
+                                    class="form-select mt-1 block w-full"
+                                    :class="{ 'is-invalid': form.errors.type }"
+                                >
+                                    <option value="user">{{ t('t-regular-user') }}</option>
+                                    <option value="store">{{ t('t-store') }}</option>
+                                    <option value="prize_manager">{{ t('t-prize-manager') }}</option>
+                                </select>
+                                <InputError :message="form.errors.type" class="mt-2" />
+                            </div>
+
+                            <div class="mb-3" v-if="form.type !== 'user'">
+                                <InputLabel for="password" :value="t('t-password')" />
+                                <TextInput
+                                    id="password"
+                                    v-model="form.password"
+                                    type="password"
+                                    class="mt-1 block w-full"
+                                    :class="{ 'is-invalid': form.errors.password }"
+                                />
+                                <InputError :message="form.errors.password" class="mt-2" />
+                            </div>
+
+                            <div class="mb-3" v-if="form.type !== 'user'">
+                                <InputLabel for="password_confirmation" :value="t('t-password-confirmation')" />
+                                <TextInput
+                                    id="password_confirmation"
+                                    v-model="form.password_confirmation"
+                                    type="password"
+                                    class="mt-1 block w-full"
+                                    :class="{ 'is-invalid': form.errors.password_confirmation }"
+                                />
+                                <InputError :message="form.errors.password_confirmation" class="mt-2" />
                             </div>
 
                             <div class="mb-3">

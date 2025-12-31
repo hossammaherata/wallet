@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\VelzonRoutesController;
 use App\Http\Controllers\Store\StoreDashboardController;
+use App\Http\Controllers\PrizeManagerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +35,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::get('/notifications', [StoreDashboardController::class, 'notifications'])->name('notifications');
         Route::post('/notifications/{id}/read', [StoreDashboardController::class, 'markNotificationAsRead'])->name('notifications.read');
         Route::post('/notifications/read-all', [StoreDashboardController::class, 'markAllNotificationsAsRead'])->name('notifications.read-all');
+    });
+
+    // Prize Manager routes
+    Route::middleware('prize.manager')->prefix('prize-manager')->name('prize-manager.')->group(function () {
+        Route::get('/dashboard', [PrizeManagerController::class, 'index'])->name('dashboard');
+        Route::get('/tickets/{id}', [PrizeManagerController::class, 'show'])->name('tickets.show');
+        Route::post('/tickets/{id}/add-winner', [PrizeManagerController::class, 'addWinner'])->name('tickets.add-winner');
     });
 
     // Route::controller(VelzonRoutesController::class)->group(function () {

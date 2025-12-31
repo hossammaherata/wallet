@@ -17,7 +17,7 @@ use Laravel\Sanctum\HasApiTokens;
 /**
  * User Model
  * 
- * Represents a user in the system. Can be of type: user, store, or admin.
+ * Represents a user in the system. Can be of type: user, store, admin, or prize_manager.
  * Uses SoftDeletes to allow recovery of deleted records.
  * 
  * @property int $id
@@ -25,7 +25,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string|null $email
  * @property string|null $phone
  * @property string $password
- * @property string $type User type: 'user', 'store', or 'admin'
+ * @property string $type User type: 'user', 'store', 'admin', or 'prize_manager'
  * @property string $status Account status: 'active' or 'suspended'
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -37,6 +37,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method bool isAdmin()
  * @method bool isStore()
  * @method bool isRegularUser()
+ * @method bool isPrizeManager()
  * @method bool isActive()
  * @method bool hasWallet()
  */
@@ -145,6 +146,16 @@ class User extends Authenticatable implements Searchable
     public function isRegularUser(): bool
     {
         return $this->type === 'user';
+    }
+
+    /**
+     * Check if user is a prize manager.
+     * 
+     * @return bool
+     */
+    public function isPrizeManager(): bool
+    {
+        return $this->type === 'prize_manager';
     }
 
     /**

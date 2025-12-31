@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'check.user.type' => \App\Http\Middleware\CheckUserType::class,
         'ability' => \App\Http\Middleware\CheckAbility::class,
         'store' => \App\Http\Middleware\StoreMiddleware::class,
+        'prize.manager' => \App\Http\Middleware\PrizeManagerMiddleware::class,
     ];
 }

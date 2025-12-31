@@ -206,6 +206,24 @@ export default {
                 </Link>
               </li>
               
+              <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'admin'">
+                <Link :href="route('admin.prizes.index')" class="nav-link custom-abc">
+                {{ $t('t-prizes-management') }}
+                </Link>
+              </li>
+              
+              <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'admin'">
+                <Link :href="route('admin.prizes.statistics')" class="nav-link custom-abc">
+                {{ $t('t-prizes-statistics') }}
+                </Link>
+              </li>
+              
+              <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'prize_manager'">
+                <Link :href="route('prize-manager.dashboard')" class="nav-link custom-abc">
+                {{ $t('t-available-prizes-today') }}
+                </Link>
+              </li>
+              
               <li class="nav-item" v-if="$page.props.auth.user && $page.props.auth.user.type === 'store'">
                 <Link :href="route('store.dashboard')" class="nav-link custom-abc" data-key="t-store-dashboard">
                 {{ $t("t-store-dashboard") }}
