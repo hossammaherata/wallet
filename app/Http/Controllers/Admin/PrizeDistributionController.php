@@ -65,12 +65,46 @@ class PrizeDistributionController extends BaseController
             $query->whereDate('created_at', '<=', $dateTo);
         }
 
+        // Calculate total distributions count before pagination
+        $totalDistributions = (clone $query)->count();
+
         $distributions = $query->orderBy('created_at', 'desc')
             ->paginate(20)
             ->withQueryString();
 
+        // Calculate total points awarded (from successful winners only)
+        // Apply same filters as the main query
+        $winnersQuery = PrizeDistributionWinner::where('status', 'success')
+            ->whereHas('prizeDistribution', function ($q) use ($keyword, $eventType, $status, $dateFrom, $dateTo) {
+                if ($keyword) {
+                    $q->where(function ($query) use ($keyword) {
+                        $query->where('event_id', 'like', "%{$keyword}%")
+                            ->orWhereJsonContains('event_meta->title', $keyword)
+                            ->orWhereJsonContains('event_meta->title_ar', $keyword);
+                    });
+                }
+                if ($eventType) {
+                    $q->where('event_type', $eventType);
+                }
+                if ($status) {
+                    $q->where('status', $status);
+                }
+                if ($dateFrom) {
+                    $q->whereDate('created_at', '>=', $dateFrom);
+                }
+                if ($dateTo) {
+                    $q->whereDate('created_at', '<=', $dateTo);
+                }
+            });
+
+        $totalPointsAwarded = $winnersQuery->sum('prize_amount');
+
         return Inertia::render('Admin/prize-distributions/Index', [
             'distributions' => $distributions,
+            'statistics' => [
+                'total_points_awarded' => (float) $totalPointsAwarded,
+                'total_distributions' => $totalDistributions,
+            ],
             'filters' => [
                 'keyword' => $keyword,
                 'event_type' => $eventType,

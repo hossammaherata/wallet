@@ -497,5 +497,7 @@
     "t-back-to-list": "Back to List",
     "t-attendance-fan": "Attendance Fan",
     "t-online-fan": "Online Fan",
-    "t-ugc-creator": "UGC Creator"
+    "t-ugc-creator": "UGC Creator",
+    "t-total-distributions": "Total Distributions",
+    "t-total-points-awarded": "Total Points Awarded"
 }

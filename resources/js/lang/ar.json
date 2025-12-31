@@ -490,5 +490,7 @@
     "t-back-to-list": "العودة للقائمة",
     "t-attendance-fan": "حضور الجماهير",
     "t-online-fan": "جماهير أونلاين",
-    "t-ugc-creator": "منشئ محتوى"
+    "t-ugc-creator": "منشئ محتوى",
+    "t-total-distributions": "إجمالي التوزيعات",
+    "t-total-points-awarded": "إجمالي النقاط الممنوحة"
 }

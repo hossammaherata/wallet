@@ -4,13 +4,13 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import Layout from '@/Layouts/main.vue';
 import PageHeader from '@/Components/page-header.vue';
 import CardHeader from '@/common/card-header.vue';
-import { BRow, BCol, BCard, BCardBody, BTable, BPagination, BButton, BBadge, BFormSelect, BFormInput } from 'bootstrap-vue-next';
+import { BRow, BCol, BCard, BCardBody, BTable, BPagination, BButton, BBadge, BFormSelect, BFormInput, BCardHeader } from 'bootstrap-vue-next';
 import { useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const { distributions, filters } = usePage().props;
+const { distributions, filters, statistics } = usePage().props;
 
 const form = useForm({ 
     page: 1, 
@@ -75,12 +75,58 @@ const getEventTypeBadge = (type) => {
 const getEventTitle = (distribution) => {
     return distribution.event_meta?.title || distribution.event_meta?.title_ar || '-';
 };
+
+const formatAmount = (amount) => {
+    return parseFloat(amount || 0).toFixed(2);
+};
 </script>
 
 <template>
     <Layout>
         <Head :title="t('t-prize-distributions')" />
         <PageHeader :title="t('t-prize-distributions')" :pageTitle="t('t-dashboards')" />
+
+        <BRow>
+            <!-- Statistics Cards -->
+            <BCol lg="6" class="mb-4">
+                <BCard>
+                    <BCardBody>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h6 class="text-muted mb-2">{{ t('t-total-distributions') }}</h6>
+                                <h4 class="mb-0">{{ statistics?.total_distributions || 0 }}</h4>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm">
+                                    <span class="avatar-title bg-primary-subtle text-primary rounded-circle fs-2">
+                                        <i class="ri-file-list-3-line"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </BCardBody>
+                </BCard>
+            </BCol>
+            <BCol lg="6" class="mb-4">
+                <BCard>
+                    <BCardBody>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h6 class="text-muted mb-2">{{ t('t-total-points-awarded') }}</h6>
+                                <h4 class="mb-0">{{ formatAmount(statistics?.total_points_awarded || 0) }} {{ t('t-points') }}</h4>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm">
+                                    <span class="avatar-title bg-success-subtle text-success rounded-circle fs-2">
+                                        <i class="ri-coins-line"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </BCardBody>
+                </BCard>
+            </BCol>
+        </BRow>
 
         <BRow>
             <BCol lg="12">
