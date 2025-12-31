@@ -185,6 +185,7 @@ const getTypeBadge = (type) => {
                                     { key: 'from_user', label: t('t-from'), sortable: false },
                                     { key: 'to_user', label: t('t-to'), sortable: false },
                                     { key: 'amount', label: t('t-amount'), sortable: true },
+                                    { key: 'fee', label: t('t-fee'), sortable: true },
                                     { key: 'type', label: t('t-type'), sortable: true },
                                     { key: 'status', label: t('t-status'), sortable: true },
                                     { key: 'created_at', label: t('t-created-at'), sortable: true },
@@ -234,6 +235,19 @@ const getTypeBadge = (type) => {
                                         ></i>
                                         {{ item.display_amount || formatAmount(item.amount) }} {{ t('t-points') }}
                                     </span>
+                                    <div v-if="item.has_fee && item.original_amount" class="small text-muted">
+                                        {{ t('t-from-original') }} {{ formatAmount(item.original_amount) }}
+                                    </div>
+                                </template>
+
+                                <template #cell(fee)="{ item }">
+                                    <span v-if="item.has_fee" class="text-danger fw-bold">
+                                        {{ formatAmount(item.fee) }} {{ t('t-points') }}
+                                        <span v-if="item.fee_percentage > 0" class="text-muted small">
+                                            ({{ item.fee_percentage }}%)
+                                        </span>
+                                    </span>
+                                    <span v-else class="text-muted">-</span>
                                 </template>
 
                                 <template #cell(type)="{ item }">

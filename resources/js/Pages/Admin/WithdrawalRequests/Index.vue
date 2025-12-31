@@ -278,6 +278,7 @@ const rejectRequest = (requestId) => {
                                             { key: 'user', label: t('t-user') || 'المستخدم', sortable: false },
                                             { key: 'bank_account', label: t('t-bank-account'), sortable: false },
                                             { key: 'amount', label: t('t-amount'), sortable: true },
+                                            { key: 'fee', label: t('t-fee'), sortable: true },
                                             { key: 'status', label: t('t-status'), sortable: true },
                                             { key: 'created_at', label: t('t-created-at'), sortable: true },
                                             { key: 'admin', label: t('t-admin') || 'من قبل', sortable: false },
@@ -310,6 +311,13 @@ const rejectRequest = (requestId) => {
                                             <span class="fw-bold text-primary">
                                                 {{ formatAmount(item.amount) }} {{ t('t-points') || 'نقطة' }}
                                             </span>
+                                        </template>
+
+                                        <template #cell(fee)="{ item }">
+                                            <span v-if="item.fee > 0" class="fw-bold text-danger">
+                                                {{ formatAmount(item.fee) }} {{ t('t-points') || 'نقطة' }}
+                                            </span>
+                                            <span v-else class="text-muted">-</span>
                                         </template>
 
                                         <template #cell(status)="{ item }">

@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
  * @property int|null $from_wallet_id Sender wallet ID
  * @property int|null $to_wallet_id Receiver wallet ID
  * @property float $amount Transaction amount
+ * @property float $fee Fee charged on the transaction
  * @property string $type Transaction type: 'purchase', 'transfer', 'credit', 'debit', 'refund', 'withdrawal'
  * @property string $status Transaction status: 'pending', 'success', 'failed'
  * @property string $reference_id Unique UUID reference for tracking
@@ -43,6 +44,7 @@ class WalletTransaction extends Model
         'from_wallet_id',
         'to_wallet_id',
         'amount',
+        'fee',
         'type',
         'status',
         'reference_id',
@@ -51,6 +53,7 @@ class WalletTransaction extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'fee' => 'decimal:2',
         'meta' => 'array',
     ];
 

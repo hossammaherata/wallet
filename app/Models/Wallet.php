@@ -108,7 +108,11 @@ class Wallet extends Model
     /**
      * Calculate balance from transactions.
      * 
-     * Balance = Sum of all successful credit transactions - Sum of all successful debit transactions
+     * Balance = Sum of all successful credit transactions - Sum of all successful debit transactions (including fees)
+     * 
+     * Note: For transactions with fees, the amount field contains the net amount (after fee),
+     * but we need to account for the fee that was deducted from the wallet balance.
+     * So we add the fee to the debit amount to get the actual amount deducted.
      * 
      * @return float
      */
@@ -120,9 +124,15 @@ class Wallet extends Model
             ->sum('amount');
 
         // Sum of all successful debit transactions (sent)
+        // For debit transactions, we need to include the fee in the calculation
+        // because the amount field contains net amount, but the fee was also deducted from balance
         $debits = $this->sentTransactions()
             ->where('status', 'success')
-            ->sum('amount');
+            ->get()
+            ->sum(function ($transaction) {
+                // Amount + fee = total amount deducted from wallet
+                return (float) $transaction->amount + (float) ($transaction->fee ?? 0);
+            });
 
         return (float) ($credits - $debits);
     }

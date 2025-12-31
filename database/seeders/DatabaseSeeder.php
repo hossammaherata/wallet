@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminUserSeeder::class,
+            WalletConfigurationSeeder::class,
         ]);
 
         // \App\Models\User::factory(10)->create();

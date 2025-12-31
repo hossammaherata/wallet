@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\WithdrawalRequestController;
+use App\Http\Controllers\Admin\WalletConfigurationController;
 
 
 
@@ -30,6 +31,10 @@ Route::middleware('admin')->group(function () {
     Route::get('/withdrawal-requests/{id}', [WithdrawalRequestController::class, 'show'])->name('withdrawal-requests.show');
     Route::post('/withdrawal-requests/{id}/approve', [WithdrawalRequestController::class, 'approve'])->name('withdrawal-requests.approve');
     Route::post('/withdrawal-requests/{id}/reject', [WithdrawalRequestController::class, 'reject'])->name('withdrawal-requests.reject');
+    
+    // Wallet Configuration routes
+    Route::get('/wallet-configuration', [WalletConfigurationController::class, 'index'])->name('wallet-configuration.index');
+    Route::put('/wallet-configuration', [WalletConfigurationController::class, 'update'])->name('wallet-configuration.update');
 });
 
 Route::get('/cities', [CityController::class, 'index'])->name('cities.index');

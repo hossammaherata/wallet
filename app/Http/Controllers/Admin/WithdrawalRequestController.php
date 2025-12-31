@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Models\WithdrawalRequest;
+use App\Models\WalletConfiguration;
 use App\Services\NotificationService;
 use App\Services\TransactionService;
 use App\Services\WalletService;
@@ -124,12 +125,26 @@ class WithdrawalRequestController extends BaseController
         }
 
         $user = $withdrawalRequest->user;
-        $amount = $withdrawalRequest->amount;
+        $requestedAmount = $withdrawalRequest->amount; // Amount requested by user
+        
+        // Use fee stored in withdrawal request (calculated at creation time)
+        // This ensures we use the fee that was valid when the request was created
+        $fee = (float) ($withdrawalRequest->fee ?? 0);
+        
+        // Get current configuration for display purposes only
+        $configuration = WalletConfiguration::getCurrent();
+        $feePercentage = $configuration->withdrawal_fee_percentage;
+        
+        // Net amount after fee (what user actually receives)
+        $netAmount = $requestedAmount - $fee;
+        
+        // Total amount to deduct from wallet (original requested amount)
+        $totalDeductAmount = $requestedAmount;
 
-        // Check wallet balance
+        // Check wallet balance (must have enough for full requested amount)
         $balance = $this->walletService->getBalance($user);
         
-        if ($amount > $balance) {
+        if ($totalDeductAmount > $balance) {
             return redirect()->back()->with('error', "رصيد المستخدم غير كافٍ. الرصيد الحالي: {$balance} نقطة");
         }
 
@@ -152,30 +167,39 @@ class WithdrawalRequestController extends BaseController
 
             // Re-check balance after locking
             $currentBalance = $this->walletService->getBalance($user);
-            if ($currentBalance < $amount) {
+            if ($currentBalance < $totalDeductAmount) {
                 DB::rollBack();
                 return redirect()->back()->with('error', "رصيد المستخدم غير كافٍ. الرصيد الحالي: {$currentBalance} نقطة");
             }
 
+            // Prepare meta with fee information
+            $transactionMeta = [
+                'withdrawal_request_id' => $withdrawalRequest->id,
+                'bank_account_id' => $withdrawalRequest->bank_account_id,
+                'bank_name' => $withdrawalRequest->bankAccount->bank_name,
+                'account_number' => $withdrawalRequest->bankAccount->account_number,
+                'approved_by' => $admin->id,
+                'approved_by_name' => $admin->name,
+                'requested_amount' => $requestedAmount,
+                'fee' => $fee,
+                'fee_percentage' => $feePercentage,
+                'net_amount' => $netAmount,
+            ];
+
             // Create withdrawal transaction (debit - reduces balance)
+            // Amount in transaction is the net amount (after fee)
             $transaction = $this->transactionService->create([
                 'from_wallet_id' => $wallet->id,
                 'to_wallet_id' => null, // Withdrawal - no destination wallet
-                'amount' => $amount,
+                'amount' => $netAmount, // Net amount after fee
+                'fee' => $fee, // Fee charged on this transaction
                 'type' => 'withdrawal',
                 'status' => 'success',
-                'meta' => [
-                    'withdrawal_request_id' => $withdrawalRequest->id,
-                    'bank_account_id' => $withdrawalRequest->bank_account_id,
-                    'bank_name' => $withdrawalRequest->bankAccount->bank_name,
-                    'account_number' => $withdrawalRequest->bankAccount->account_number,
-                    'approved_by' => $admin->id,
-                    'approved_by_name' => $admin->name,
-                ],
+                'meta' => $transactionMeta,
             ]);
 
-            // Update wallet balance
-            $newBalance = $currentBalance - $amount;
+            // Update wallet balance (deduct full requested amount)
+            $newBalance = $currentBalance - $totalDeductAmount;
             $wallet->update(['balance' => $newBalance]);
 
             // Update withdrawal request
@@ -188,21 +212,34 @@ class WithdrawalRequestController extends BaseController
             ]);
 
             // Send notification to user
+            $notificationMessage = "تم الموافقة على طلب السحب بقيمة {$requestedAmount} نقطة";
+            if ($fee > 0) {
+                $notificationMessage .= ". الرسوم: {$fee} نقطة ({$feePercentage}%). المبلغ الصافي: {$netAmount} نقطة";
+            }
+            $notificationMessage .= ". تم خصم المبلغ من محفظتك";
+
             $this->notificationService->send(
                 $user,
                 'withdrawal_request_approved',
                 'تم الموافقة على طلب السحب',
-                "تم الموافقة على طلب السحب بقيمة {$amount} نقطة. تم خصم المبلغ من محفظتك",
+                $notificationMessage,
                 [
                     'withdrawal_request_id' => $withdrawalRequest->id,
-                    'amount' => $amount,
+                    'requested_amount' => $requestedAmount,
+                    'fee' => $fee,
+                    'net_amount' => $netAmount,
                     'transaction_id' => $transaction->id,
                 ]
             );
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'تم الموافقة على طلب السحب بنجاح وتم خصم المبلغ من محفظة المستخدم');
+            $successMessage = 'تم الموافقة على طلب السحب بنجاح وتم خصم المبلغ من محفظة المستخدم';
+            if ($fee > 0) {
+                $successMessage .= ". المبلغ المطلوب: {$requestedAmount} نقطة، الرسوم: {$fee} نقطة ({$feePercentage}%)، المبلغ الصافي: {$netAmount} نقطة";
+            }
+
+            return redirect()->back()->with('success', $successMessage);
         } catch (\Exception $e) {
             dd($e);
             DB::rollBack();

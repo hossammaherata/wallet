@@ -33,6 +33,7 @@ class TransactionService
             'from_wallet_id' => $data['from_wallet_id'] ?? null,
             'to_wallet_id' => $data['to_wallet_id'] ?? null,
             'amount' => $data['amount'],
+            'fee' => $data['fee'] ?? 0,
             'type' => $data['type'],
             'status' => $data['status'] ?? 'pending',
             'reference_id' => $data['reference_id'] ?? (string) Str::uuid(),

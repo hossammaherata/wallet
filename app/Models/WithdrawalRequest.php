@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $user_id
  * @property int $bank_account_id
  * @property float $amount
+ * @property float $fee Fee charged on this withdrawal request
  * @property string $status 'pending', 'approved', 'rejected', or 'cancelled'
  * @property int|null $admin_id Admin who approved/rejected the request
  * @property string|null $admin_notes Admin notes
@@ -44,6 +45,7 @@ class WithdrawalRequest extends Model
         'user_id',
         'bank_account_id',
         'amount',
+        'fee',
         'status',
         'admin_id',
         'admin_notes',
@@ -54,6 +56,7 @@ class WithdrawalRequest extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'fee' => 'decimal:2',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
     ];

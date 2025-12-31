@@ -82,6 +82,14 @@ class TransactionController extends BaseController
         // Add display fields for each transaction
         $transactions->getCollection()->transform(function ($transaction) {
             $amount = (float) $transaction->amount;
+            $meta = $transaction->meta ?? [];
+            
+            // Extract fee information - prioritize fee field, fallback to meta
+            $fee = (float) ($transaction->fee ?? (isset($meta['fee']) ? (float) $meta['fee'] : 0));
+            $feePercentage = isset($meta['fee_percentage']) ? (float) $meta['fee_percentage'] : 0;
+            $originalAmount = isset($meta['original_amount']) ? (float) $meta['original_amount'] : ($fee > 0 ? $amount + $fee : $amount);
+            $netAmount = isset($meta['net_amount']) ? (float) $meta['net_amount'] : $amount;
+            $isFirstTransfer = isset($meta['is_first_transfer']) ? (bool) $meta['is_first_transfer'] : false;
             
             // Determine if this transaction has credit (money in) or debit (money out)
             // In Dashboard, we show both perspectives:
@@ -118,6 +126,14 @@ class TransactionController extends BaseController
             $transaction->has_credit = $hasCredit;
             $transaction->has_debit = $hasDebit;
             
+            // Add fee information
+            $transaction->fee = $fee;
+            $transaction->fee_percentage = $feePercentage;
+            $transaction->original_amount = $originalAmount;
+            $transaction->net_amount = $netAmount;
+            $transaction->is_first_transfer = $isFirstTransfer;
+            $transaction->has_fee = $fee > 0;
+            
             return $transaction;
         });
 
@@ -142,6 +158,15 @@ class TransactionController extends BaseController
             'fromWallet.user',
             'toWallet.user'
         ])->findOrFail($id);
+        
+        // Add fee information for display
+        $meta = $transaction->meta ?? [];
+        $transaction->fee_display = (float) ($transaction->fee ?? (isset($meta['fee']) ? (float) $meta['fee'] : 0));
+        $transaction->fee_percentage_display = isset($meta['fee_percentage']) ? (float) $meta['fee_percentage'] : 0;
+        $transaction->original_amount_display = isset($meta['original_amount']) ? (float) $meta['original_amount'] : ($transaction->fee_display > 0 ? $transaction->amount + $transaction->fee_display : $transaction->amount);
+        $transaction->net_amount_display = isset($meta['net_amount']) ? (float) $meta['net_amount'] : $transaction->amount;
+        $transaction->is_first_transfer_display = isset($meta['is_first_transfer']) ? (bool) $meta['is_first_transfer'] : false;
+        $transaction->has_fee_display = $transaction->fee_display > 0;
         
         return Inertia::render('Admin/transactions/Show', [
             'transaction' => $transaction

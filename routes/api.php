@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ExternalBalanceController;
 use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\WithdrawalRequestController;
+use App\Http\Controllers\Api\WalletConfigurationController;
 
 /*
 ||--------------------------------------------------------------------------
@@ -50,6 +51,10 @@ Route::prefix('v1')->group(function () {
         Route::get('/wallet/transactions', [WalletController::class, 'transactions']);
         Route::post('/wallet/pay', [WalletController::class, 'pay'])->middleware('ability:wallet:pay');
         Route::post('/wallet/transfer', [WalletController::class, 'transfer'])->middleware('ability:wallet:transfer');
+        
+        // Wallet Configuration routes
+        Route::get('/wallet/configuration', [WalletConfigurationController::class, 'getConfiguration']);
+        Route::get('/wallet/transfer/check-free', [WalletConfigurationController::class, 'checkTransferFree']);
         
         // Stores list (available for all authenticated users)
         Route::get('/stores', [WalletController::class, 'stores']);

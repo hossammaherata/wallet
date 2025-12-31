@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Models\User;
+use App\Models\WalletConfiguration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -343,7 +344,29 @@ class WalletService
             throw new \Exception('المبلغ يجب أن يكون أكبر من صفر');
         }
 
-        return DB::transaction(function () use ($fromWallet, $toWallet, $amount, $meta) {
+        // Get wallet configuration
+        $configuration = WalletConfiguration::getCurrent();
+        
+        // Check if this is user's first transfer (first transfer is free)
+        $isFirstTransfer = !WalletTransaction::where('from_wallet_id', $fromWallet->id)
+            ->where('type', 'transfer')
+            ->where('status', 'success')
+            ->exists();
+        
+        // Calculate fee (0 if first transfer or if fee percentage is 0)
+        $feePercentage = $isFirstTransfer ? 0 : $configuration->transfer_fee_percentage;
+        $fee = $configuration->calculateTransferFee($amount);
+        if ($isFirstTransfer) {
+            $fee = 0;
+        }
+        
+        // Calculate net amount (amount after fee deduction)
+        $netAmount = $amount - $fee;
+        
+        // Total amount to deduct from sender (original amount)
+        $totalDeductAmount = $amount;
+
+        return DB::transaction(function () use ($fromWallet, $toWallet, $amount, $netAmount, $fee, $feePercentage, $isFirstTransfer, $totalDeductAmount, $meta) {
             // Lock wallets to prevent race conditions
             $fromWallet = Wallet::lockForUpdate()->find($fromWallet->id);
             $toWallet = Wallet::lockForUpdate()->find($toWallet->id);
@@ -359,27 +382,36 @@ class WalletService
                 throw new \Exception($canPerform['message']);
             }
 
-            // Check balance
-            if ($fromWallet->balance < $amount) {
+            // Check balance (must have enough for original amount + fee)
+            if ($fromWallet->balance < $totalDeductAmount) {
                 throw new \Exception('رصيد غير كافٍ');
             }
 
-            // Create transaction record
+            // Prepare meta with fee information
+            $transactionMeta = $meta ?? [];
+            $transactionMeta['fee'] = $fee;
+            $transactionMeta['fee_percentage'] = $feePercentage;
+            $transactionMeta['original_amount'] = $amount;
+            $transactionMeta['net_amount'] = $netAmount;
+            $transactionMeta['is_first_transfer'] = $isFirstTransfer;
+
+            // Create transaction record (amount is the net amount received by recipient)
             $transaction = $this->transactionService->create([
                 'from_wallet_id' => $fromWallet->id,
                 'to_wallet_id' => $toWallet->id,
-                'amount' => $amount,
+                'amount' => $netAmount, // Net amount received by recipient
+                'fee' => $fee, // Fee charged on this transaction
                 'type' => 'transfer',
                 'status' => 'pending',
-                'meta' => $meta,
+                'meta' => $transactionMeta,
             ]);
 
             try {
-                // Deduct from sender wallet
-                $fromWallet->decrement('balance', $amount);
+                // Deduct from sender wallet (original amount - full amount is deducted)
+                $fromWallet->decrement('balance', $totalDeductAmount);
 
-                // Credit to receiver wallet
-                $toWallet->increment('balance', $amount);
+                // Credit to receiver wallet (net amount after fee)
+                $toWallet->increment('balance', $netAmount);
 
                 // Mark transaction as successful
                 $this->transactionService->markAsSuccess($transaction);
@@ -390,14 +422,14 @@ class WalletService
                 // Send notifications
                 $this->notificationService->sendTransactionSent(
                     $transaction->fromWallet->user,
-                    $amount,
+                    $netAmount,
                     $transaction->toWallet->user->name,
                     $transaction->reference_id
                 );
 
                 $this->notificationService->sendTransactionReceived(
                     $transaction->toWallet->user,
-                    $amount,
+                    $netAmount,
                     $transaction->fromWallet->user->name,
                     $transaction->reference_id
                 );
@@ -407,7 +439,11 @@ class WalletService
                     'reference_id' => $transaction->reference_id,
                     'from_user' => $fromWallet->user_id,
                     'to_user' => $toWallet->user_id,
-                    'amount' => $amount,
+                    'original_amount' => $amount,
+                    'net_amount' => $netAmount,
+                    'fee' => $fee,
+                    'fee_percentage' => $feePercentage,
+                    'is_first_transfer' => $isFirstTransfer,
                 ]);
 
                 return $transaction;

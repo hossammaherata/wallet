@@ -66,7 +66,28 @@ const getTypeBadge = (type) => {
                                         </tr>
                                         <tr>
                                             <th>{{ t('t-amount') }}</th>
-                                            <td><strong>{{ formatAmount(transaction.amount) }} {{ t('t-points') }}</strong></td>
+                                            <td>
+                                                <strong>{{ formatAmount(transaction.amount) }} {{ t('t-points') }}</strong>
+                                                <span v-if="transaction.has_fee_display && transaction.original_amount_display" class="text-muted ms-2">
+                                                    ({{ t('t-from-original') }} {{ formatAmount(transaction.original_amount_display) }} {{ t('t-points') }})
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="transaction.has_fee_display">
+                                            <th>{{ t('t-fee') }}</th>
+                                            <td>
+                                                <strong class="text-danger">{{ formatAmount(transaction.fee_display) }} {{ t('t-points') }}</strong>
+                                                <span v-if="transaction.fee_percentage_display > 0" class="text-muted ms-2">
+                                                    ({{ transaction.fee_percentage_display }}%)
+                                                </span>
+                                                <span v-if="transaction.is_first_transfer_display" class="badge bg-info ms-2">
+                                                    {{ t('t-first-transfer-free') }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr v-if="transaction.has_fee_display && transaction.net_amount_display">
+                                            <th>{{ t('t-net-amount') }}</th>
+                                            <td><strong class="text-success">{{ formatAmount(transaction.net_amount_display) }} {{ t('t-points') }}</strong></td>
                                         </tr>
                                         <tr>
                                             <th>{{ t('t-type') }}</th>

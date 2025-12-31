@@ -187,6 +187,26 @@ const rejectRequest = () => {
                                     </p>
                                 </div>
                             </BCol>
+                            <BCol md="6" v-if="withdrawalRequest.fee > 0">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">{{ t('t-fee') }}</label>
+                                    <p class="form-control-plaintext">
+                                        <span class="h5 text-danger fw-bold">
+                                            {{ formatAmount(withdrawalRequest.fee) }} {{ t('t-points') }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </BCol>
+                            <BCol md="6" v-if="withdrawalRequest.fee > 0">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">{{ t('t-net-amount') }}</label>
+                                    <p class="form-control-plaintext">
+                                        <span class="h5 text-success fw-bold">
+                                            {{ formatAmount(withdrawalRequest.amount - withdrawalRequest.fee) }} {{ t('t-points') }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </BCol>
                         </BRow>
 
                         <BRow>

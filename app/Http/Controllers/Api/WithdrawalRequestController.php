@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\WithdrawalRequestResource;
 use App\Models\BankAccount;
 use App\Models\WithdrawalRequest;
+use App\Models\WalletConfiguration;
 use App\Services\NotificationService;
 use App\Services\WalletService;
 use App\Traits\ApiResponse;
@@ -120,6 +121,14 @@ class WithdrawalRequestController extends Controller
             return $this->errorResponse('محفظتك موقفة حالياً. يرجى التواصل مع الدعم', null, 400);
         }
 
+        // Get wallet configuration to calculate fee at request creation time
+        $configuration = WalletConfiguration::getCurrent();
+        $fee = $configuration->calculateWithdrawalFee($amount);
+        $feePercentage = $configuration->withdrawal_fee_percentage;
+        
+        // Net amount after fee (what user will actually receive)
+        $netAmount = $amount - $fee;
+
         try {
             DB::beginTransaction();
 
@@ -127,6 +136,7 @@ class WithdrawalRequestController extends Controller
                 'user_id' => $user->id,
                 'bank_account_id' => $bankAccount->id,
                 'amount' => $amount,
+                'fee' => $fee, // Store fee at request creation time
                 'status' => 'pending',
             ]);
 
