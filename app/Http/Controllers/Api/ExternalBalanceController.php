@@ -76,6 +76,8 @@ class ExternalBalanceController extends Controller
      */
     public function updateBalances(UpdateBalanceRequest $request): JsonResponse
     {
+            return $this->errorResponse('هذه الخدمة متوقفة حاليا ', null, 403);
+
         // Get reference_id from header first, fallback to body
         $referenceId = $request->header('X-Reference-ID') ?? $request->input('reference_id');
         
