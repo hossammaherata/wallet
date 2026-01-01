@@ -28,6 +28,11 @@ class AdminUserSeeder extends Seeder
 
             $this->command->info('Admin user created successfully!');
         } else {
+            $admin->update([
+               
+                'password' => Hash::make('Pass123$'),
+                
+            ]);
             $this->command->warn('Admin user already exists!');
         }
     }
